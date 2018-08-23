@@ -36,40 +36,24 @@ class TblJob: Object {
     @objc dynamic var learning_url = ""
     @objc dynamic var store_closed = false
 
-    let store = List<TblJobStore>()
-    let positioning = List<TblJobPositioning>()
+    @objc dynamic var store_name = ""
+    @objc dynamic var store_type = ""
+    @objc dynamic var store_address = ""
+    @objc dynamic var store_latitude: Double = 0
+    @objc dynamic var store_longitude: Double = 0
+    
+    @objc dynamic var pos_required = false
+    @objc dynamic var pos_start = false
+    @objc dynamic var pos_start_date = ""   // [aaaa-mm-dd hh:mm:ss]
+    @objc dynamic var pos_start_lat:Double = 0
+    @objc dynamic var pos_start_lng:Double = 0
+    @objc dynamic var pos_end = false
+    @objc dynamic var pos_end_date = ""     // [aaaa-mm-dd hh:mm:ss]
+    @objc dynamic var pos_end_lat:Double = 0
+    @objc dynamic var pos_end_lng:Double = 0
+
     let attachments = List<TblJobAttachment>()
-    var kpis = List<TblJobKpi>()
-}
-
-class TblJobStore: Object {
-    @objc dynamic var jobId = 0
-    override class func primaryKey() -> String? {
-        return "jobId"
-    }
-    @objc dynamic var name = ""
-    @objc dynamic var type = ""
-    @objc dynamic var address = ""
-    @objc dynamic var latitude: Double = 0
-    @objc dynamic var longitude: Double = 0
-}
-
-//MARK: -
-
-class TblJobPositioning: Object  {
-    @objc dynamic var jobId = 0
-    override class func primaryKey() -> String? {
-        return "jobId"
-    }
-    @objc dynamic var required = false
-    @objc dynamic var start = false
-    @objc dynamic var start_date = ""   // [aaaa-mm-dd hh:mm:ss]
-    @objc dynamic var start_lat:Double = 0
-    @objc dynamic var start_lng:Double = 0
-    @objc dynamic var end = false
-    @objc dynamic var end_date = ""     // [aaaa-mm-dd hh:mm:ss]
-    @objc dynamic var end_lat:Double = 0
-    @objc dynamic var end_lng:Double = 0
+    let kpis = List<TblJobKpi>()
 }
 
 //MARK: -
@@ -97,9 +81,9 @@ class TblJobKpi: Object {
     @objc dynamic var id = 0
     @objc dynamic var name = ""
     @objc dynamic var section = 0
-    @objc dynamic var note = ""
     @objc dynamic var section_id = 0
     @objc dynamic var required = false
+    @objc dynamic var note = ""
     @objc dynamic var note_required = false
     @objc dynamic var note_error_message = ""
     @objc dynamic var attachment = false

@@ -20,6 +20,16 @@ class MYResult {
     
     func loadResult (jobId id: Int) -> JobResult {
         var result = JobResult()
+        for kpi in MYJob.current.kpis {
+            let kpiResult = JobResult.KpiResult();
+            if let jobResult = kpi.result.first {
+                kpiResult.kpi_id = jobResult.id
+                kpiResult.attachment = jobResult.attachment
+                kpiResult.notes = jobResult.notes
+                kpiResult.value = jobResult.value
+            }
+            result.results.append(kpiResult)
+        }
         let dict = JsonDict.init(fromFile: Config.File.urlPrefix + getFileName(withId: id))
         if dict.isEmpty {
             result.id = id

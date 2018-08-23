@@ -1,5 +1,5 @@
 //
-//  JobStruct.swift
+//  LcRealm
 //  MysteryClient
 //
 //  Created by mac on 02/09/17.
@@ -27,23 +27,11 @@ class LcRealm {
         return realm.objects(TblJob.self).filter(filter)
     }
 
-//    func write(_ obj: Object){
-//        do {
-//            try realm.write {
-//                realm.add(obj, update: true)
-//            }
-//        } catch {
-//            print("Could not write to database: ", error)
-//        }
-//    }
-    
     func jobClear(_ id: Int = 0) {
         let filter = (id > 0) ? "jobId = \(id)" : "jobId > 0"
         
         let tblJob = realm.objects(TblJob.self).filter(filter)
-        let tblJobSto = realm.objects(TblJobStore.self).filter(filter)
         let tblJobAtt = realm.objects(TblJobAttachment.self).filter(filter)
-        let tblJobDep = realm.objects(TblJobKpiValDependency.self).filter(filter)
         let tblJobKpi = realm.objects(TblJobKpi.self).filter(filter)
         let tblJobKpiRes = realm.objects(TblJobKpiResult.self).filter(filter)
         let tblJobKpiVal = realm.objects(TblJobKpiValuation.self).filter(filter)
@@ -53,8 +41,6 @@ class LcRealm {
             try realm.write {
                 realm.delete(tblJob)
                 realm.delete(tblJobAtt)
-                realm.delete(tblJobDep)
-                realm.delete(tblJobSto)
                 realm.delete(tblJobKpi)
                 realm.delete(tblJobKpiRes)
                 realm.delete(tblJobKpiVal)
@@ -113,28 +99,22 @@ class LcRealm {
         tblJpb.store_closed = dict.bool("store_closed") // Boolean [0/1]
         
         let store = dict.dictionary("store")
-        let incStore = TblJobStore()
-        incStore.jobId = tblJpb.jobId
-        incStore.name = store.string("name")
-        incStore.type = store.string("type")
-        incStore.address = store.string("address")
-        incStore.latitude = store.double("latitude")
-        incStore.longitude = store.double("longitude")
-        tblJpb.store.append(incStore)
+        tblJpb.store_name = store.string("name")
+        tblJpb.store_type = store.string("type")
+        tblJpb.store_address = store.string("address")
+        tblJpb.store_latitude = store.double("latitude")
+        tblJpb.store_longitude = store.double("longitude")
         
         let positioning = dict.dictionary("positioning")
-        let incPositioning = TblJobPositioning()
-        incPositioning.jobId = tblJpb.jobId
-        incPositioning.required = positioning.bool("required") // Boolean [0/1]
-        incPositioning.start = positioning.bool("start") // Boolean [0/1]
-        incPositioning.start_date = positioning.string("start_date") // [aaaa-mm-dd hh:mm:ss]
-        incPositioning.start_lat = positioning.double("start_lat")
-        incPositioning.start_lng = positioning.double("start_lng")
-        incPositioning.end = positioning.bool("required") // Boolean [0/1]
-        incPositioning.end_date = positioning.string("end_date") // [aaaa-mm-dd hh:mm:ss]
-        incPositioning.end_lat = positioning.double("end_lat")
-        incPositioning.end_lng = positioning.double("end_lng")
-        tblJpb.positioning.append(incPositioning)
+        tblJpb.pos_required = positioning.bool("required") // Boolean [0/1]
+        tblJpb.pos_start = positioning.bool("start") // Boolean [0/1]
+        tblJpb.pos_start_date = positioning.string("start_date") // [aaaa-mm-dd hh:mm:ss]
+        tblJpb.pos_start_lat = positioning.double("start_lat")
+        tblJpb.pos_start_lng = positioning.double("start_lng")
+        tblJpb.pos_end = positioning.bool("required") // Boolean [0/1]
+        tblJpb.pos_end_date = positioning.string("end_date") // [aaaa-mm-dd hh:mm:ss]
+        tblJpb.pos_end_lat = positioning.double("end_lat")
+        tblJpb.pos_end_lng = positioning.double("end_lng")
         
         for attachment in dict.array("attachments") as! [JsonDict] {
             let att = TblJobAttachment()
@@ -146,68 +126,68 @@ class LcRealm {
             tblJpb.attachments.append(att)
         }
         
-        func updateKpisWithDict (_ dict: JsonDict) -> List<TblJobKpi> {
-            let array = List<TblJobKpi>()
-            let kpis = dict.array("kpis") as! [JsonDict]
-            for kpiDict in kpis {
-                let incKpi = TblJobKpi()
-                incKpi.jobId = tblJpb.jobId
-                incKpi.id = kpiDict.int("id")
-                incKpi.name = kpiDict.string("name")
-                incKpi.section = kpiDict.int("section") //  Boolean [0/1]
-                incKpi.note = kpiDict.string("note")
-                incKpi.section_id = kpiDict.int("section_id")
-                incKpi.required = kpiDict.bool("required") // Boolean [0/1]
-                incKpi.note_required = kpiDict.bool("note_required") // Boolean [0/1]
-                incKpi.note_error_message = kpiDict.string("note_error_message")
-                incKpi.attachment = kpiDict.bool("attachment") // Boolean [0/1]
-                incKpi.attachment_required = kpiDict.bool("attachment_required") // Boolean [0/1]
-                incKpi.attachment_error_message = kpiDict.string("attachment_error_message")
-                incKpi.type = kpiDict.string("type")
-                incKpi.order = kpiDict.int("order")
-                incKpi.factor = kpiDict.string("factor")
-                incKpi.service = kpiDict.string("service")
-                incKpi.standard = kpiDict.string("standard")
-                incKpi.instructions = kpiDict.string("instructions")
+        func kpiWithDict (_ dict: JsonDict) -> TblJobKpi {
+            let jobKpi = TblJobKpi()
+            jobKpi.jobId = tblJpb.jobId
+            jobKpi.id = dict.int("id")
+            jobKpi.name = dict.string("name")
+            jobKpi.section = dict.int("section") //  Boolean [0/1]
+            jobKpi.note = dict.string("note")
+            jobKpi.section_id = dict.int("section_id")
+            jobKpi.required = dict.bool("required") // Boolean [0/1]
+            jobKpi.note_required = dict.bool("note_required") // Boolean [0/1]
+            jobKpi.note_error_message = dict.string("note_error_message")
+            jobKpi.attachment = dict.bool("attachment") // Boolean [0/1]
+            jobKpi.attachment_required = dict.bool("attachment_required") // Boolean [0/1]
+            jobKpi.attachment_error_message = dict.string("attachment_error_message")
+            jobKpi.type = dict.string("type")
+            jobKpi.order = dict.int("order")
+            jobKpi.factor = dict.string("factor")
+            jobKpi.service = dict.string("service")
+            jobKpi.standard = dict.string("standard")
+            jobKpi.instructions = dict.string("instructions")
+            
+            for valutation in dict.array("valuations") as! [JsonDict] {
+                let val = TblJobKpiValuation()
+                val.jobId = tblJpb.jobId
+                val.id = valutation.int("id")
+                val.name = valutation.string("name")
+                val.order = valutation.int("order")
+                val.positive = valutation.bool("positive") // Boolean [0/1]
+                val.note_required = valutation.bool("note_required") // Boolean [0/1]
+                val.attachment_required = valutation.bool("attachment_required") // Boolean [0/1]
                 
-                for valutation in kpiDict.array("valuations") as! [JsonDict] {
-                    let val = TblJobKpiValuation()
-                    val.jobId = tblJpb.jobId
-                    val.id = valutation.int("id")
-                    val.name = valutation.string("name")
-                    val.order = valutation.int("order")
-                    val.positive = valutation.bool("positive") // Boolean [0/1]
-                    val.note_required = valutation.bool("note_required") // Boolean [0/1]
-                    val.attachment_required = valutation.bool("attachment_required") // Boolean [0/1]
-
-                    for dependency in valutation.array("dependencies") as! [JsonDict] {
-                        let dep = TblJobKpiValDependency()
-                        dep.jobId = tblJpb.jobId
-                        dep.key = dependency.int("key")
-                        dep.value = dependency.string("value")
-                        dep.notes = dependency.string("notes")
-                        val.dependencies.append(dep)
-                    }
-                    val.key = "\(tblJpb.jobId).\(incKpi.id).\(val.id)"
-                    incKpi.valuations.append(val)
+                for dependency in valutation.array("dependencies") as! [JsonDict] {
+                    let dep = TblJobKpiValDependency()
+                    dep.jobId = tblJpb.jobId
+                    dep.key = dependency.int("key")
+                    dep.value = dependency.string("value")
+                    dep.notes = dependency.string("notes")
+                    val.dependencies.append(dep)
                 }
-                
-                let result = kpiDict.dictionary("result")
-                let incResult = TblJobKpiResult();
-                incResult.id = result.int("id")
-                incResult.value = result.string("value")
-                incResult.notes = result.string("notes")
-                incResult.attachment = result.string("attachment")
-                incResult.url = result.string("url")
-                incResult.irregular = result.bool("irregular")
-                incResult.irregular_note = result.string("irregular_note")
-                incKpi.result.append((incResult))
-                array.append(incKpi)
+                val.key = "\(tblJpb.jobId).\(jobKpi.id).\(val.id)"
+                jobKpi.valuations.append(val)
             }
-            return array
+            
+            let result = dict.dictionary("result")
+            let jobResult = TblJobKpiResult();
+            jobResult.jobId = tblJpb.jobId
+            jobResult.id = result.int("id")
+            jobResult.value = result.string("value")
+            jobResult.notes = result.string("notes")
+            jobResult.attachment = result.string("attachment")
+            jobResult.url = result.string("url")
+            jobResult.irregular = result.bool("irregular")
+            jobResult.irregular_note = result.string("irregular_note")
+            
+            jobKpi.result.append((jobResult))
+            return jobKpi
         }
         
-        tblJpb.kpis = updateKpisWithDict(dict)
+        for kpi in dict.array("kpis") as! [JsonDict] {
+            tblJpb.kpis.append(kpiWithDict(kpi))
+        }
+
         do {
             try realm.write {
                 realm.add(tblJpb, update: true)

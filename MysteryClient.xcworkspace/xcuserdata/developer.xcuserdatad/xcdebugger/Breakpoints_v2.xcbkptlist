@@ -9,28 +9,12 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Cls/Class/MYResult.swift"
-            timestampString = "556719634.251345"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "169"
-            endingLineNumber = "169"
-            landmarkName = "saveDB()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Cls/Model/LcrRealm.swift"
-            timestampString = "556719634.2514189"
+            timestampString = "556724265.7426161"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
             landmarkName = "addJob(withDict:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -41,13 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Cls/Class/MYResult.swift"
-            timestampString = "556719634.251932"
+            filePath = "Kpi/KpiMainUtil.swift"
+            timestampString = "556724679.021901"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "148"
-            endingLineNumber = "148"
-            landmarkName = "saveDB()"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "fixValuation(isValid:dep:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

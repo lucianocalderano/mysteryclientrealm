@@ -36,14 +36,8 @@ class JobsHomeCell: UITableViewCell {
     }
     
     private func update () {
-        if let store = job.store.first {
-            name.text = store.name
-            address.text = store.address
-        }
-        else {
-            name.text = "store.name"
-            address.text = "store.address"
-        }
+        name.text = job.store_name
+        address.text = job.store_address
         rif.text = "Rif. " + job.reference
         day.text = job.estimate_date.toString(withFormat: "dd")
         month.text = job.estimate_date.toString(withFormat: "MMM")

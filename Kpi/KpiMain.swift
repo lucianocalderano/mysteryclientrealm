@@ -52,7 +52,7 @@ class KpiMain: MYViewController {
         
         myKeyboard = MYKeyboard(vc: self, scroll: scroll)
         
-        headerTitle = MYJob.current.store.first!.name
+        headerTitle = MYJob.current.store_name
         
         for btn in [backBtn, nextBtn] as! [MYButton] {
             let ico = btn.image(for: .normal)?.resize(12)

@@ -104,7 +104,7 @@ extension JobsHome: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = JobsHomeCell.dequeue(tableView, indexPath)
         cell.delegate = self
-        cell.job =  items[indexPath.row]
+        cell.job = items[indexPath.row]
         return cell
     }
 }
@@ -122,11 +122,9 @@ extension JobsHome: UITableViewDelegate {
 
 extension JobsHome: JobsHomeCellDelegate {
     func mapTapped(_ sender: JobsHomeCell, tblJob: TblJob) {
-        if let store = tblJob.store.first {
-        _ = Maps.init(lat: store.latitude,
-                      lon: store.longitude,
-                      name: store.name)
-        }
+        _ = Maps.init(lat: MYJob.current.store_latitude,
+                      lon: MYJob.current.store_longitude,
+                      name: MYJob.current.store_name)
     }
 }
 

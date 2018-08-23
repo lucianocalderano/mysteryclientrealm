@@ -65,10 +65,9 @@ class JobDetail: MYViewController {
     }
     
     @IBAction func mapsTapped () {
-        let store = MYJob.current.store.first!
-        _ = Maps.init(lat: store.latitude,
-                      lon: store.longitude,
-                      name: store.name)
+        _ = Maps.init(lat: MYJob.current.store_latitude,
+                      lon: MYJob.current.store_longitude,
+                      name: MYJob.current.store_name)
     }
     
     @IBAction func descTapped () {
@@ -157,13 +156,13 @@ class JobDetail: MYViewController {
     }
     
     private func showData () {
-        header?.header.titleLabel.text = MYJob.current.store.first!.name
+        header?.header.titleLabel.text = MYJob.current.store_name
         infoLabel.text =
             Lng("rifNum") + ": \(MYJob.current.reference)\n" +
             Lng("verIni") + ": \(MYJob.current.start_date.toString(withFormat: Config.DateFmt.Data))\n" +
             Lng("verEnd") + ": \(MYJob.current.end_date.toString(withFormat: Config.DateFmt.Data))\n"
-        nameLabel.text = MYJob.current.store.first!.name
-        addrLabel.text = MYJob.current.store.first!.address
+        nameLabel.text = MYJob.current.store_name
+        addrLabel.text = MYJob.current.store_address
     }
     
     private func loadAndShowResult () {

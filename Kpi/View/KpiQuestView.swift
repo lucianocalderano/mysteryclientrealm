@@ -73,7 +73,9 @@ class KpiQuestView: KpiBaseView {
                 InvalidKpi.resetDependenciesWithKpi(currentKpi)
             }
             
-            currentResult.kpi_id = currentKpi.id
+//            if currentResult.kpi_id == 0 {
+//                currentResult.kpi_id = currentKpi.id
+//            }
             currentResult.value = responseValue.value
             currentResult.notes = kpiNote.text
             currentResult.attachment = atchName.text!
