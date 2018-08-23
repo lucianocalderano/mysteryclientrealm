@@ -54,8 +54,8 @@ class LoginView: UIView {
                 userText.text = "utente_gen"
                 passText.text = "novella44"
         #if DEBUG
-        //        userText.text = "fc883"
-        //        passText.text = "mebius01"
+//                userText.text = "fc883"
+//                passText.text = "mebius01"
         #endif
 
         saveCred = !credential.user.isEmpty

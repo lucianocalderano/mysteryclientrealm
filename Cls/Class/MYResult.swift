@@ -11,7 +11,7 @@ import Foundation
 class MYResult {
     static let shared = MYResult()
     static var current = JobResult()
-
+    
     var resultDict = JsonDict()
     
     func getFileName (withId id: Int) -> String {
@@ -104,11 +104,70 @@ class MYResult {
             "positioning"               : dictPos
             ] as JsonDict
         _ = self.resultDict.saveToFile(self.getFileName(withId: result.id))
+        TblResultUtil.saveDB()
     }
     
     func removeResultWithId (_ id: Int) {
         do {
             try? FileManager.default.removeItem(atPath: self.getFileName(withId: id))
+        }
+    }
+    
+}
+
+import RealmSwift
+
+class TblResultUtil {
+    class func saveDB () {
+        let result = MYResult.current
+        let realm = LcRealm.shared.realm!
+        var tbl = TblResult()
+        let tblList = realm.objects(TblResult.self).filter("id = \(result.id)")
+        if tblList.count > 0 {
+            tbl = tblList.first!
+        }
+        else {
+            tbl.id                        = result.id
+        }
+        do {
+            try realm.write {
+            tbl.estimate_date             = result.estimate_date
+            tbl.compiled                  = result.compiled == 1
+            tbl.compilation_date          = result.compilation_date
+            tbl.updated                   = result.updated == 1
+            tbl.update_date               = result.update_date
+            tbl.execution_date            = result.execution_date
+            tbl.execution_start_time      = result.execution_start_time
+            tbl.execution_end_time        = result.execution_end_time
+            tbl.store_closed              = result.store_closed == 1
+            tbl.comment                   = result.comment
+            
+            realm.add(tbl, update: true)
+            }
+        } catch {
+            print("Could not write to database: ", error)
+        }
+
+        for r in result.results {
+            let tblList = realm.objects(TblResultKpi.self).filter("kpi_id = \(r.kpi_id)")
+
+            var kpiResult = TblResultKpi()
+            if tblList.count > 0 {
+                kpiResult = tblList.first!
+            }
+            else {
+                kpiResult.kpi_id =  r.kpi_id
+            }
+            do {
+                try realm.write {
+                    kpiResult.value =  r.value
+                    kpiResult.notes =  r.notes
+                    kpiResult.attachment =  r.attachment
+                    realm.add(kpiResult, update: true)
+                }
+            } catch {
+                print("Could not write to database: ", error)
+            }
         }
     }
 }

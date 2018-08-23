@@ -50,15 +50,6 @@ class JobDetail: MYViewController {
         for btn in [strtBtn, stopBtn] as! [MYButton] {
             btn.titleLabel?.lineBreakMode = .byWordWrapping;
             btn.titleLabel?.textAlignment = .center;
-//            let ico = btn.image(for: .normal)?.resize(16)
-//            btn.setImage(ico, for: .normal)
-//            
-//            let spacing: CGFloat = 10
-//            let titleSize = btn.titleLabel!.frame.size
-//            let imageSize = btn.imageView!.frame.size
-//            let center = btn.frame.size.width / 2
-//            
-////            btn.titleEdgeInsets = UIEdgeInsets(top: 0, left: -(titleSize.width + imageSize.width) / 2, bottom: -(imageSize.height + spacing), right: 0)
         }
         showData()
     }
@@ -94,10 +85,10 @@ class JobDetail: MYViewController {
     }
     
     @IBAction func spreTapped () {
-        openWeb(type: .bookingRemove, id: MYJob.current.id)
+        openWeb(type: .bookingRemove, id: MYJob.current.jobId)
     }
     @IBAction func dateTapped () {
-        openWeb(type: .bookingMove, id: MYJob.current.id)
+        openWeb(type: .bookingMove, id: MYJob.current.jobId)
     }
     
     @IBAction func contTapped () {
@@ -120,7 +111,7 @@ class JobDetail: MYViewController {
     }
     
     @IBAction func tickTapped () {
-        openWeb(type: .ticketView, id: MYJob.current.id)
+        openWeb(type: .ticketView, id: MYJob.current.jobId)
     }
     
     @IBAction func strtTapped () {
@@ -152,7 +143,7 @@ class JobDetail: MYViewController {
     // MARK: - private
     
     private func initialize () {
-        let path = "\(Config.Path.docs)/\(MYJob.current.id)"
+        let path = "\(Config.Path.docs)/\(MYJob.current.jobId)"
         let fm = FileManager.default
         if fm.fileExists(atPath: path) == false {
             do {

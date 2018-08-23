@@ -25,7 +25,6 @@ class KpiLastView: KpiBaseView {
         finalText.layer.borderColor = UIColor.lightGray.cgColor
         finalText.layer.borderWidth = 1
         finalText.delegate = self
-        MYJob.current.comment_max = 30
     }
     
     override func didMoveToSuperview() {

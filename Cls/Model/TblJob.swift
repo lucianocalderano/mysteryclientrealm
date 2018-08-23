@@ -11,9 +11,9 @@ import RealmSwift
 
 class TblJob: Object {
     override static func primaryKey() -> String? {
-        return "id"
+        return "jobId"
     }
-    @objc dynamic var id = 0
+    @objc dynamic var jobId = 0
     @objc dynamic var reference = ""
     @objc dynamic var _description = ""
     @objc dynamic var additional_description = ""
@@ -40,13 +40,12 @@ class TblJob: Object {
     let positioning = List<TblJobPositioning>()
     let attachments = List<TblJobAttachment>()
     var kpis = List<TblJobKpi>()
-
 }
 
 class TblJobStore: Object {
-    @objc dynamic var key = 0
+    @objc dynamic var jobId = 0
     override class func primaryKey() -> String? {
-        return "key"
+        return "jobId"
     }
     @objc dynamic var name = ""
     @objc dynamic var type = ""
@@ -57,22 +56,10 @@ class TblJobStore: Object {
 
 //MARK: -
 
-class TblJobAttachment: Object  {
-    override class func primaryKey() -> String? {
-        return "id"
-    }
-    @objc dynamic var id = 0
-    @objc dynamic var filename = ""
-    @objc dynamic var name = ""
-    @objc dynamic var url = ""
-}
-
-//MARK: -
-
 class TblJobPositioning: Object  {
-    @objc dynamic var key = 0
+    @objc dynamic var jobId = 0
     override class func primaryKey() -> String? {
-        return "key"
+        return "jobId"
     }
     @objc dynamic var required = false
     @objc dynamic var start = false
@@ -87,12 +74,26 @@ class TblJobPositioning: Object  {
 
 //MARK: -
 
+class TblJobAttachment: Object  {
+    @objc dynamic var jobId = 0
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    @objc dynamic var id = 0
+    @objc dynamic var filename = ""
+    @objc dynamic var name = ""
+    @objc dynamic var url = ""
+}
+
+//MARK: -
+
 class TblJobKpi: Object {
+    @objc dynamic var jobId = 0
+    @objc dynamic var isValid = true
     override class func primaryKey() -> String? {
         return "id"
     }
 
-    @objc dynamic var isValid = true
     @objc dynamic var id = 0
     @objc dynamic var name = ""
     @objc dynamic var section = 0
@@ -113,20 +114,8 @@ class TblJobKpi: Object {
     let valuations = List<TblJobKpiValuation>()
     let result = List<TblJobKpiResult>()
 }
-class TblJobKpiResult: Object {
-    override class func primaryKey() -> String? {
-        return "id"
-    }
-    
-    @objc dynamic var id = 0
-    @objc dynamic var value = ""
-    @objc dynamic var notes = ""
-    @objc dynamic var attachment = ""
-    @objc dynamic var url = ""
-    @objc dynamic var irregular = false
-    @objc dynamic var irregular_note = ""
-}
 class TblJobKpiValuation: Object {
+    @objc dynamic var jobId = 0
     @objc dynamic var key = ""
     override class func primaryKey() -> String? {
         return "key"
@@ -141,6 +130,7 @@ class TblJobKpiValuation: Object {
     let dependencies = List<TblJobKpiValDependency>()
 }
 class TblJobKpiValDependency: Object {
+    @objc dynamic var jobId = 0
     override class func primaryKey() -> String? {
         return "key"
     }
@@ -148,4 +138,18 @@ class TblJobKpiValDependency: Object {
     @objc dynamic var key = 0
     @objc dynamic var value = ""
     @objc dynamic var notes = ""
+}
+class TblJobKpiResult: Object {
+    @objc dynamic var jobId = 0
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    
+    @objc dynamic var id = 0
+    @objc dynamic var value = ""
+    @objc dynamic var notes = ""
+    @objc dynamic var attachment = ""
+    @objc dynamic var url = ""
+    @objc dynamic var irregular = false
+    @objc dynamic var irregular_note = ""
 }

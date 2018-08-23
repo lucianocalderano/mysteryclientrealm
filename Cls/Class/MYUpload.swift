@@ -12,6 +12,7 @@ import UserNotifications
 
 class MYUpload {
     class func startUpload() {
+        return
         let me = MYUpload()
         
         do {

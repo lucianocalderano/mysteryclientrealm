@@ -77,6 +77,7 @@
 		8B0CA1E9212C07650016B90A /* MYUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0CA1E8212C07650016B90A /* MYUpload.swift */; };
 		8B63FA41212D44AA00590F1A /* TblJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B63FA40212D44AA00590F1A /* TblJob.swift */; };
 		8BAE0893211C432600911B4E /* MYGps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAE0892211C432600911B4E /* MYGps.swift */; };
+		8BB45752212EAD2C00BCC040 /* TblResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BB45751212EAD2C00BCC040 /* TblResult.swift */; };
 		8BE4BD21212D8E8D00A40473 /* LcrRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BE4BD20212D8E8C00A40473 /* LcrRealm.swift */; };
 		8BE4BD23212DABC100A40473 /* MYJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BE4BD22212DABC100A40473 /* MYJob.swift */; };
 /* End PBXBuildFile section */
@@ -169,6 +170,7 @@
 		8B0CA1E8212C07650016B90A /* MYUpload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MYUpload.swift; sourceTree = "<group>"; };
 		8B63FA40212D44AA00590F1A /* TblJob.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TblJob.swift; path = Model/TblJob.swift; sourceTree = "<group>"; };
 		8BAE0892211C432600911B4E /* MYGps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MYGps.swift; sourceTree = "<group>"; };
+		8BB45751212EAD2C00BCC040 /* TblResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TblResult.swift; path = Model/TblResult.swift; sourceTree = "<group>"; };
 		8BE4BD20212D8E8C00A40473 /* LcrRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LcrRealm.swift; path = Model/LcrRealm.swift; sourceTree = "<group>"; };
 		8BE4BD22212DABC100A40473 /* MYJob.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MYJob.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -300,6 +302,7 @@
 				04FC171A1F010FF300226F1A /* Config.swift */,
 				8BE4BD20212D8E8C00A40473 /* LcrRealm.swift */,
 				8B63FA40212D44AA00590F1A /* TblJob.swift */,
+				8BB45751212EAD2C00BCC040 /* TblResult.swift */,
 				04FC17281F0145BC00226F1A /* ItemEnum.swift */,
 				04BCAD331EFA9DCF00745556 /* User.swift */,
 				048C44861F5B183D00E836C0 /* ResultStruct.swift */,
@@ -584,6 +587,7 @@
 				4B30C204207F59270018BD6C /* SubDatePicker.swift in Sources */,
 				4B43C493208E07CB0073D566 /* Main.swift in Sources */,
 				048C44831F5B161C00E836C0 /* MYMaps.swift in Sources */,
+				8BB45752212EAD2C00BCC040 /* TblResult.swift in Sources */,
 				04A2109D1F03AC3400D1480C /* JobDetailAtch.swift in Sources */,
 				049489461F0A556100A40122 /* Ext.UIView.swift in Sources */,
 				04461A2D1EFA85CF008CD1E2 /* Ext.UIFont.swift in Sources */,

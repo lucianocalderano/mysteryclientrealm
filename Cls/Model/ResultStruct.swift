@@ -9,7 +9,7 @@
 import Foundation
 
 struct JobResult {    
-    static let shared = JobResult()
+//    static let shared = JobResult()
     var id = 0
     var estimate_date = "" // Date [aaaa-mm-dd]
     // Mandatory. Date the user would like to do the job.

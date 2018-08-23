@@ -16,7 +16,7 @@ class JobsHome: MYViewController {
 
     @IBOutlet private var tableView: UITableView!
     private let wheel = MYWheel()
-    private var items = DB.incarichi()!
+    private var items = DB.jobs()!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +29,7 @@ class JobsHome: MYViewController {
     }
     
     override func headerViewDxTapped() {
-        DB.incarichiClear()
+        DB.jobClear()
         loadJobs()
     }
     
@@ -41,14 +41,14 @@ class JobsHome: MYViewController {
             }
             
             for item in items {
-                if item.id > 0 {
-                    if zipExists(id: item.id) {
-                        DB.incarichiClear("id = \(item.id)")
+                if item.jobId > 0 {
+                    if zipExists(id: item.jobId) {
+                        DB.jobClear(item.jobId)
                     }
                 }
             }
             
-            self.items = DB.incarichi()
+            self.items = DB.jobs()
             self.tableView.reloadData()
         })
     }
@@ -75,14 +75,9 @@ extension JobsHome {
             let request = MYHttp.init(.get, param: param)
             request.load( { (response) in
                 for dict in response.array("jobs") as! [JsonDict] {
-                    DB.incaricoAdd(withDict: dict)
+                    DB.addJob(withDict: dict)
                 }
-                
-                func zipExists (id: Int) -> Bool {
-                    let file = MYZip.getZipFilePath(id: id)
-                    return FileManager.default.fileExists(atPath: file)
-                }
-                done (DB.incarichi())
+                done (DB.jobs())
             }) {
                 (errorCode, message) in
                 self.alert(errorCode, message: message, okBlock: nil)
@@ -109,7 +104,7 @@ extension JobsHome: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = JobsHomeCell.dequeue(tableView, indexPath)
         cell.delegate = self
-        cell.incarico =  items[indexPath.row]
+        cell.job =  items[indexPath.row]
         return cell
     }
 }
@@ -119,15 +114,15 @@ extension JobsHome: UITableViewDataSource {
 extension JobsHome: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        selectedJob(job: items[indexPath.row])
+        selectedJob(items[indexPath.row])
     }
 }
 
 //MARK: - JobsHomeCellDelegate
 
 extension JobsHome: JobsHomeCellDelegate {
-    func mapTapped(_ sender: JobsHomeCell, incarico: TblJob) {
-        if let store = incarico.store.first {
+    func mapTapped(_ sender: JobsHomeCell, tblJob: TblJob) {
+        if let store = tblJob.store.first {
         _ = Maps.init(lat: store.latitude,
                       lon: store.longitude,
                       name: store.name)
@@ -138,20 +133,20 @@ extension JobsHome: JobsHomeCellDelegate {
 // MARK: - Selected job
 
 extension JobsHome {
-    private func selectedJob (job: TblJob) {
+    private func selectedJob (_ job: TblJob) {
         wheel.start(self.view)
-        MYJob.updateCurrent(job, delegate: self)
+        MYJob.updateCurrentJob(job, delegate: self)
     }
 }
 
 extension JobsHome: MYJobDelegate {
-    func currentIncaricoSuccess(_ loadJob: MYJob) {
+    func currentJobSuccess(_ loadJob: MYJob) {
         wheel.stop()
         let vc = JobDetail.Instance()
         self.navigationController?.show(vc, sender: self)
     }
 
-    func currentIncaricoError(_ loadJob: MYJob, errorCode: String, message: String) {
+    func currentJobError(_ loadJob: MYJob, errorCode: String, message: String) {
         wheel.stop()
         self.alert(errorCode, message: message, okBlock: nil)
     }

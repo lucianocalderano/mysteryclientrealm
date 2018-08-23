@@ -9,7 +9,7 @@
 import UIKit
 
 protocol JobsHomeCellDelegate {
-    func mapTapped (_ sender: JobsHomeCell, incarico: TblJob)
+    func mapTapped (_ sender: JobsHomeCell, tblJob: TblJob)
 }
 
 class JobsHomeCell: UITableViewCell {
@@ -17,7 +17,7 @@ class JobsHomeCell: UITableViewCell {
         return tableView.dequeueReusableCell(withIdentifier: "JobsHomeCell", for: indexPath) as! JobsHomeCell
     }
 
-    var incarico: TblJob! {
+    var job: TblJob! {
         didSet {
             update ()
         }
@@ -36,7 +36,7 @@ class JobsHomeCell: UITableViewCell {
     }
     
     private func update () {
-        if let store = incarico.store.first {
+        if let store = job.store.first {
             name.text = store.name
             address.text = store.address
         }
@@ -44,14 +44,14 @@ class JobsHomeCell: UITableViewCell {
             name.text = "store.name"
             address.text = "store.address"
         }
-        rif.text = "Rif. " + incarico.reference
-        day.text = incarico.estimate_date.toString(withFormat: "dd")
-        month.text = incarico.estimate_date.toString(withFormat: "MMM")
-        warn.isHidden = incarico.irregular == false
+        rif.text = "Rif. " + job.reference
+        day.text = job.estimate_date.toString(withFormat: "dd")
+        month.text = job.estimate_date.toString(withFormat: "MMM")
+        warn.isHidden = job.irregular == false
     }
     
     @IBAction func mapTapped () {
-        delegate?.mapTapped(self, incarico: incarico)
+        delegate?.mapTapped(self, tblJob: job)
     }
 }
 

@@ -10,33 +10,33 @@ import Foundation
 import RealmSwift
 
 protocol MYJobDelegate {
-    func currentIncaricoSuccess(_ loadJob: MYJob)
-    func currentIncaricoError(_ loadJob: MYJob, errorCode: String, message: String)
+    func currentJobSuccess(_ loadJob: MYJob)
+    func currentJobError(_ loadJob: MYJob, errorCode: String, message: String)
 }
 
 class MYJob {
     public static var current: TblJob!
     public static var JobPath = ""
-
     public static var KpiKeyList = [Int]() // Di comodo per evitare la ricerca del kpi.id nell'array dei kpi
     
     class func removeJobWithId (_ id: Int) {
-        DB.incarichiClear("id = \(id)")
+        DB.jobClear(id)
     }
     
-    class func updateCurrent (_ current: TblJob, delegate: MYJobDelegate?) {
+    class func updateCurrentJob (_ job: TblJob, delegate: MYJobDelegate?) {
+        MYJob.current = job
+        MYJob.JobPath = Config.Path.docs + "\(MYJob.current.jobId)" + "/"
+        MYResult.current = MYResult.shared.loadResult (jobId: MYJob.current.jobId)
+
         let me = MYJob()
-        me.updateCurrent(current, delegate: delegate)
+        me.updateCurrentJob(delegate: delegate)
     }
     
     private var delegate: MYJobDelegate?
     private let fm = FileManager.default
     
-    func updateCurrent (_ incarico: TblJob, delegate: MYJobDelegate?) {
+    func updateCurrentJob (delegate: MYJobDelegate?) {
         self.delegate = delegate
-        MYJob.current = incarico
-        MYJob.JobPath = Config.Path.docs + "\(MYJob.current.id)" + "/"
-        MYResult.current = MYResult.shared.loadResult (jobId: MYJob.current.id)
         
         if errorOnCraateWorkingPath() {
             return
@@ -58,7 +58,7 @@ class MYJob {
                                    withIntermediateDirectories: true,
                                    attributes: nil)
         } catch let error as NSError {
-            self.delegate?.currentIncaricoError(self, errorCode: "Unable to create directory", message: error.debugDescription)
+            self.delegate?.currentJobError(self, errorCode: "Unable to create directory", message: error.debugDescription)
             return true
         }
         return false
@@ -69,18 +69,18 @@ class MYJob {
             self.loadJobDetail()
         }) {
             (errorCode, message) in
-            self.delegate?.currentIncaricoError(self, errorCode: errorCode, message: message)
+            self.delegate?.currentJobError(self, errorCode: errorCode, message: message)
         }
     }
     
     private func loadJobDetail () {
-        let param = [ "object" : "job", "object_id":  MYJob.current.id ] as JsonDict
+        let param = [ "object" : "job", "object_id":  MYJob.current.jobId ] as JsonDict
         let request = MYHttp.init(.get, param: param)
         
         request.load( { (response) in
             let dict = response.dictionary("job")
-            DB.incaricoAdd(withDict: dict)
-            MYJob.current = DB.incarichi("id = \(MYJob.current.id)").first
+            DB.addJob(withDict: dict)
+            MYJob.current = DB.jobs(withId: MYJob.current.jobId).first
             
             if MYJob.current.irregular == true {
                 self.downloadResult()
@@ -90,7 +90,7 @@ class MYJob {
             
         }) {
             (errorCode, message) in
-            self.delegate?.currentIncaricoError(self, errorCode: errorCode, message: message)
+            self.delegate?.currentJobError(self, errorCode: errorCode, message: message)
         }
     }
     
@@ -101,7 +101,7 @@ class MYJob {
             MYJob.KpiKeyList.append(kpi.id)
         }
         
-        self.delegate?.currentIncaricoSuccess(self)
+        self.delegate?.currentJobSuccess(self)
     }
     
     //MARK:- Irregular = true
@@ -126,7 +126,7 @@ class MYJob {
     private func downloadAtch (url urlString: String, kpiId: Int) {
         let param = [
             "object" : "job",
-            "result_attachment":  MYJob.current.id
+            "result_attachment":  MYJob.current.jobId
             ] as JsonDict
         let request = MYHttp.init(.get, param: param, showWheel: false)
         

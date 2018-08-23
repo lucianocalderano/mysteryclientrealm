@@ -47,15 +47,15 @@ class MYZip {
                                                    includingPropertiesForKeys: nil,
                                                    options: [])
             
-            let zipFile = URL.init(fileURLWithPath: MYZip.getZipFilePath(id: MYJob.current.id))
+            let zipFile = URL.init(fileURLWithPath: MYZip.getZipFilePath(id: MYJob.current.jobId))
             try Zip.zipFiles(paths: filesToZip,
                              zipFilePath: zipFile,
                              password: nil,
                              progress: nil)
             
             try? fm.removeItem(atPath: MYJob.JobPath)
-            MYJob.removeJobWithId(MYJob.current.id)
-            MYResult.shared.removeResultWithId(MYJob.current.id)
+            MYJob.removeJobWithId(MYJob.current.jobId)
+            MYResult.shared.removeResultWithId(MYJob.current.jobId)
             
             return true
         } catch {
