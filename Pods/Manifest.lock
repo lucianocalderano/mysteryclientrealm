@@ -1,0 +1,42 @@
+PODS:
+  - Alamofire (4.7.3)
+  - LcLib (0.0.1)
+  - Realm (3.7.6):
+    - Realm/Headers (= 3.7.6)
+  - Realm/Headers (3.7.6)
+  - RealmSwift (3.7.6):
+    - Realm (= 3.7.6)
+  - Zip (1.1.0)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.4)
+  - LcLib (from `https://github.com/lucianocalderano/LcLib.git`)
+  - RealmSwift
+  - Zip (~> 1.1)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - Realm
+    - RealmSwift
+    - Zip
+
+EXTERNAL SOURCES:
+  LcLib:
+    :git: https://github.com/lucianocalderano/LcLib.git
+
+CHECKOUT OPTIONS:
+  LcLib:
+    :commit: 8cb45b30881cee1340b8dbb9af668717c5aae52d
+    :git: https://github.com/lucianocalderano/LcLib.git
+
+SPEC CHECKSUMS:
+  Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
+  LcLib: c156a44cfb11e4901beef87564739f59ccecfc12
+  Realm: 9eaecad54712d6246d08ba34c10f354e4715d7d3
+  RealmSwift: 1fe08b4ebaeeaacf17f9ba0343f7b25c9fc31fa6
+  Zip: 8877eede3dda76bcac281225c20e71c25270774c
+
+PODFILE CHECKSUM: 319bcb476f37ee0478884da6662a63279624d28f
+
+COCOAPODS: 1.5.3

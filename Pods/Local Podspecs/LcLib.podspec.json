@@ -1,0 +1,25 @@
+{
+  "name": "LcLib",
+  "platforms": {
+    "ios": "9.0"
+  },
+  "summary": "LcLib - Utilità standard.",
+  "requires_arc": true,
+  "swift_version": "4.0",
+  "version": "0.0.1",
+  "license": {
+    "type": "LcLib License, Version 0.0.1",
+    "text": "Licensed LcLib free Version 0.0.1 (by Lc)\n\n#pod spec create LcLib\n\n#git init\n#git add .\n#git commit -m \"Initial commit\"\n#git tag 0.0.1\n#git remote add origin https://github.com/lucianocalderano/LcLib.git\n#git push -u origin master --tags\n\n#pod repo add LcLib https://github.com/lucianocalderano/LcLib.git\n#pod repo push LcLib LcLib.podspec\n\n"
+  },
+  "authors": {
+    "Luciano C.": "luciano.c@virgilio.it"
+  },
+  "homepage": "https://github.com/lucianocalderano",
+  "source": {
+    "git": "https://github.com/lucianocalderano/LcLib.git",
+    "tag": "0.0.1"
+  },
+  "frameworks": "UIKit",
+  "source_files": "LcLib/**/*.{swift}",
+  "resources": ""
+}
