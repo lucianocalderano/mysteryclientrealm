@@ -11,7 +11,7 @@ import UIKit
 class KpiBaseSubView: UIView {
     var delegate: KpiSubViewDelegate?
     
-    var currentKpi: TblJobKpi!
+    var currentJobKpi: TblJobKpi!
     var currentResult: TblResultKpi!
 
     func getValuation () -> KpiResponseValues {

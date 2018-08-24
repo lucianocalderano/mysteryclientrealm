@@ -248,7 +248,7 @@ For the Realm Platform Extensions component
   otherwise discover the source code from which the binary code was derived.
   You may, however, access and obtain a separate license for most of the
   source code from which this Software was created, at
-  http://realm.io/pricing/.
+  http://myRealm.io/pricing/.
 
   2. Redistributions in binary form must reproduce the above copyright notice,
   this list of conditions and the following disclaimer in the documentation
@@ -500,7 +500,7 @@ For the Realm Platform Extensions component
   otherwise discover the source code from which the binary code was derived.
   You may, however, access and obtain a separate license for most of the
   source code from which this Software was created, at
-  http://realm.io/pricing/.
+  http://myRealm.io/pricing/.
 
   2. Redistributions in binary form must reproduce the above copyright notice,
   this list of conditions and the following disclaimer in the documentation

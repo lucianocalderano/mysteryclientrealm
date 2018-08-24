@@ -76,11 +76,11 @@ class KpiQuestView: KpiBaseView {
 //            if currentResult.kpi_id == 0 {
 //                currentResult.kpi_id = currentKpi.id
 //            }
-            LcRealm.begin()
+            myRealmBegin()
             currentResult.value = responseValue.value
             currentResult.notes = kpiNote.text
             currentResult.attachment = atchName.text!
-            LcRealm.commit()
+            myRealmCommit()
 
             if responseValue.dependencies.count > 0 {
                 InvalidKpi.updateWithResponse(responseValue)
@@ -141,9 +141,9 @@ class KpiQuestView: KpiBaseView {
     }
     
     private func setAtchName (file: String = "") {
-        LcRealm.begin()
+        myRealmBegin()
         currentResult.attachment = file
-        LcRealm.commit()
+        myRealmCommit()
     }
     
     @objc func atchRemove () {
@@ -238,7 +238,7 @@ class KpiQuestView: KpiBaseView {
         }
         containerSubView.addSubviewWithConstraints(kpiQuestSubView)
         kpiQuestSubView.delegate = self
-        kpiQuestSubView.currentKpi = currentJobKpi
+        kpiQuestSubView.currentJobKpi = currentJobKpi
         kpiQuestSubView.currentResult = currentResult
     }
     

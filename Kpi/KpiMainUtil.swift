@@ -45,7 +45,7 @@ enum KpiResultType {
 class InvalidKpi {
     private class func fixValuation (isValid: Bool, dep: TblJobKpiValDependency) {
         if let idx = Current.kpiKeyList.index(of: dep.key) {
-            LcRealm.begin()
+            myRealmBegin()
             Current.job.kpis[idx].isValid = isValid
 
             let kpiResult = Current.result.results[idx]
@@ -54,7 +54,7 @@ class InvalidKpi {
             kpiResult.notes = isValid ? "" : dep.notes
             
             Current.result.results[idx] = kpiResult
-            LcRealm.commit()
+            myRealmCommit()
         }
     }
     

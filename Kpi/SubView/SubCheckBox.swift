@@ -23,7 +23,7 @@ class SubCheckBox: KpiBaseSubView {
         didSet {
             if let value = currentResult?.value {
                 let itemsId = value.components(separatedBy: separator)
-                for item in currentKpi.valuations {
+                for item in currentJobKpi.valuations {
                     let id = String(item.id)
                     if itemsId.contains(id) {
                         selectedId.append(id)
@@ -33,7 +33,7 @@ class SubCheckBox: KpiBaseSubView {
             tableView.reloadData()
             
             var rect = frame
-            rect.size.height = rowHeight * CGFloat(currentKpi.valuations.count)
+            rect.size.height = rowHeight * CGFloat(currentJobKpi.valuations.count)
             frame = rect
             delegate?.kpiViewHeight(rect.size.height)
         }
@@ -52,7 +52,7 @@ class SubCheckBox: KpiBaseSubView {
     override func getValuation () -> KpiResponseValues {
         var response = KpiResponseValues()
         if selectedId.count > 0 {
-            for item in currentKpi.valuations {
+            for item in currentJobKpi.valuations {
                 let id = String(item.id)
                 if selectedId.contains(id) {
                     if response.value.isEmpty == false {
@@ -80,7 +80,7 @@ extension SubCheckBox: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return currentKpi.valuations.count
+        return currentJobKpi.valuations.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -89,7 +89,7 @@ extension SubCheckBox: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = SubCheckBoxCell.dequeue(tableView, indexPath)
-        let item = currentKpi.valuations[indexPath.row]
+        let item = currentJobKpi.valuations[indexPath.row]
         let id = String(item.id)
         let selected = selectedId.contains(id)
         
@@ -104,7 +104,7 @@ extension SubCheckBox: UITableViewDataSource {
 extension SubCheckBox: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let item = currentKpi.valuations[indexPath.row]
+        let item = currentJobKpi.valuations[indexPath.row]
         let id = String(item.id)
         if selectedId.contains(id) {
             let idx = selectedId.index(of: id)

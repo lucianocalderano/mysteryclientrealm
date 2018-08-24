@@ -21,7 +21,7 @@ class SubRadio: KpiBaseSubView {
         didSet {
             if let value = currentResult?.value {
                 let index = Int(value)
-                for item in currentKpi.valuations {
+                for item in currentJobKpi.valuations {
                     if item.id == index {
                         valuationSelected = item
                         break
@@ -31,7 +31,7 @@ class SubRadio: KpiBaseSubView {
             tableView.reloadData()
             
             var rect = self.frame
-            rect.size.height = self.rowHeight * CGFloat(currentKpi.valuations.count)
+            rect.size.height = self.rowHeight * CGFloat(currentJobKpi.valuations.count)
             self.frame = rect
             delegate?.kpiViewHeight(rect.size.height)
         }
@@ -59,7 +59,7 @@ class SubRadio: KpiBaseSubView {
 extension SubRadio: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        valuationSelected = currentKpi.valuations[indexPath.row]
+        valuationSelected = currentJobKpi.valuations[indexPath.row]
         tableView.reloadData()
         delegate?.valuationSelected(valuationSelected!)
     }
@@ -73,7 +73,7 @@ extension SubRadio: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return currentKpi.valuations.count
+        return currentJobKpi.valuations.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -82,7 +82,7 @@ extension SubRadio: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = SubRadioCell.dequeue(tableView, indexPath)
-        let item = currentKpi.valuations[indexPath.row]
+        let item = currentJobKpi.valuations[indexPath.row]
         cell.valuationTitle.text = item.name
         
         let selected = (self.valuationSelected != nil && self.valuationSelected?.id == item.id)

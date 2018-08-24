@@ -94,9 +94,9 @@ class JobDetail: MYViewController {
                 loadAndShowResult()
                 return
             }
-            LcRealm.begin()
+            myRealmBegin()
             Current.result.estimate_date = Date().toString(withFormat: Config.DateFmt.DataJson)
-            LcRealm.commit()
+            myRealmCommit()
         }
         let wheel = MYWheel()
         wheel.start(view)
@@ -112,33 +112,33 @@ class JobDetail: MYViewController {
     
     @IBAction func strtTapped () {
         MYGps.shared.start()
-        LcRealm.begin()
+        myRealmBegin()
         Current.result.pos_start = true
-        LcRealm.commit()
+        myRealmCommit()
         executionTime()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            LcRealm.begin()
+            myRealmBegin()
             Current.result.pos_start_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
             Current.result.pos_start_lat = MYGps.shared.currentGps.latitude
             Current.result.pos_start_lng = MYGps.shared.currentGps.longitude
-            LcRealm.commit()
+            myRealmCommit()
         }
     }
     @IBAction func stopTapped () {
         MYGps.shared.start()
-        LcRealm.begin()
+        myRealmBegin()
         Current.result.pos_end = true
-        LcRealm.commit()
+        myRealmCommit()
         executionTime()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            LcRealm.begin()
+            myRealmBegin()
             Current.result.pos_end_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
             Current.result.pos_end_lat = MYGps.shared.currentGps.latitude
             Current.result.pos_end_lng = MYGps.shared.currentGps.longitude
             if Current.result.execution_end_time.isEmpty {
                 Current.result.execution_end_time = Date().toString(withFormat: Config.DateFmt.Ora)
             }
-            LcRealm.commit()
+            myRealmCommit()
         }
     }
     

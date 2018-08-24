@@ -24,7 +24,7 @@ class KpiInitView: KpiBaseView {
         for btn in [okButton, noButton] {
             btn?.layer.cornerRadius = (btn?.frame.size.height)! / 2
         }
-        firstLoad()
+        TblResultUtil.firstLoad()
         okTapped()
     }
     
@@ -44,10 +44,10 @@ class KpiInitView: KpiBaseView {
             completion (.errNotes)
         }
         
-        LcRealm.begin()
+        myRealmBegin()
         Current.result.execution_date = datePicker.date.toString(withFormat: Config.DateFmt.DataJson)
         Current.result.execution_start_time = datePicker.date.toString(withFormat: Config.DateFmt.Ora)
-        LcRealm.commit()
+        myRealmCommit()
         completion (.next)
     }
     
@@ -64,9 +64,5 @@ class KpiInitView: KpiBaseView {
         okButton.backgroundColor = UIColor.lightGray
         noButton.backgroundColor = UIColor.white
     }
-    
-    private func firstLoad () {
-        TblResultUtil.firstLoad()
-    }
-}
+ }
 

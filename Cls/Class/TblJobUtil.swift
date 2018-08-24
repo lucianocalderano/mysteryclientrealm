@@ -16,8 +16,7 @@ protocol MYJobDelegate {
 
 class TblJobUtil {
     class func getJobs() -> Results<TblJob>! {
-        let realm = LcRealm.shared.realm!
-        return realm.objects(TblJob.self)
+        return myRealm.objects(TblJob.self)
     }
     
     class func updateCurrent (_ job: TblJob, delegate: MYJobDelegate?) {
@@ -26,22 +25,21 @@ class TblJobUtil {
     }
     
     class func removeJob (WithId id: Int) {
-        let realm = LcRealm.shared.realm!
         let filter = "jobId = \(id)"
         
-        let tblJob = realm.objects(TblJob.self).filter(filter)
-        let tblJobAtt = realm.objects(TblJobAttachment.self).filter(filter)
-        let tblJobKpi = realm.objects(TblJobKpi.self).filter(filter)
-        let tblJobKpiVal = realm.objects(TblJobKpiValuation.self).filter(filter)
-        let tblJobKpiValDep = realm.objects(TblJobKpiValDependency.self).filter(filter)
+        let tblJob = myRealm.objects(TblJob.self).filter(filter)
+        let tblJobAtt = myRealm.objects(TblJobAttachment.self).filter(filter)
+        let tblJobKpi = myRealm.objects(TblJobKpi.self).filter(filter)
+        let tblJobKpiVal = myRealm.objects(TblJobKpiValuation.self).filter(filter)
+        let tblJobKpiValDep = myRealm.objects(TblJobKpiValDependency.self).filter(filter)
         
         do {
-            try realm.write {
-                realm.delete(tblJob)
-                realm.delete(tblJobAtt)
-                realm.delete(tblJobKpi)
-                realm.delete(tblJobKpiVal)
-                realm.delete(tblJobKpiValDep)
+            try myRealm.write {
+                myRealm.delete(tblJob)
+                myRealm.delete(tblJobAtt)
+                myRealm.delete(tblJobKpi)
+                myRealm.delete(tblJobKpiVal)
+                myRealm.delete(tblJobKpiValDep)
             }
         } catch {
             print("Could not write to database: ", error)
@@ -49,16 +47,15 @@ class TblJobUtil {
     }
     
     class  func setKpiToValid() {
-        let realm = LcRealm.shared.realm!
-        let kpis = realm.objects(TblJobKpi.self).filter("isValid = %@", false)
+        let kpis = myRealm.objects(TblJobKpi.self).filter("isValid = %@", false)
         if kpis.count == 0 {
             return
         }
         do {
-            try realm.write {
+            try myRealm.write {
                 let kpi = kpis.first!
                 kpi.isValid = true
-                realm.add(kpi, update: true)
+                myRealm.add(kpi, update: true)
             }
         } catch {
             print("Could not write to database: ", error)
@@ -66,7 +63,7 @@ class TblJobUtil {
     }
     
     class func addJob(withDict dict: JsonDict) -> TblJob {
-        let realm = LcRealm.shared.realm!
+        let realm = myRealm
         let tblJpb = TblJob()
         
         tblJpb.jobId = dict.int("id")
@@ -181,8 +178,8 @@ class TblJobUtil {
         }
         
         do {
-            try realm.write {
-                realm.add(tblJpb, update: true)
+            try myRealm.write {
+                myRealm.add(tblJpb, update: true)
             }
         } catch {
             print("Could not write to database: ", error)
@@ -259,7 +256,7 @@ class TblJobUtil {
             self.delegate?.updateCurrentJobSuccess()
         }
         
-//MARK: - DownloadAttachment
+//MARK: - DownloadAttachment job irregular
         
         private func startDownloadAttachment() {
             guard Current.job.irregular else {

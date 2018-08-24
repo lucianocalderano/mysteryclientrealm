@@ -54,12 +54,16 @@ class SendJob {
     private func removeFiles () -> String {
         do {
             try fm.removeItem(atPath: Current.workingPath)
-            let id = Current.job.jobId
-            TblJobUtil.removeJob(WithId: id)
-            TblResultUtil.removeResult(withId: id)
+            clearJobAndResult()
             return ""
         } catch {
         }
         return "removeFiles: error"
+    }
+    
+    private func clearJobAndResult() {
+        let id = Current.job.jobId
+        TblJobUtil.removeJob(WithId: id)
+        TblResultUtil.removeResult(withId: id)
     }
 }

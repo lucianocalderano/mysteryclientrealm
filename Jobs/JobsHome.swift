@@ -29,7 +29,7 @@ class JobsHome: MYViewController {
     }
     
     override func headerViewDxTapped() {
-        LcRealm.shared.clearAll()
+        myRealmClearAll()
         loadJobs()
     }
     

@@ -11,53 +11,41 @@ import RealmSwift
 
 class TblResultUtil {
     class func firstLoad () {
-        let realm = LcRealm.shared.realm!
-        do {
-            try realm.write {
-                Current.result.results.removeAll()
-            }
-        } catch {
-            print("Could not write to database: ", error)
-        }
-        
-        for jobKpi in Current.job.kpis {
-            let listTblResultKpi = realm.objects(TblResultKpi.self).filter("kpi_id = \(jobKpi.result_id)")
-            var tblResultKpi = TblResultKpi()
-            if let tmp = listTblResultKpi.first {
-                tblResultKpi = tmp
-            }
-            else {
-                tblResultKpi.kpi_id = jobKpi.result_id
-            }
-            do {
-                try realm.write {
-                    Current.result.results.append(tblResultKpi)
-                }
-            } catch {
-                print("Could not write to database: ", error)
-            }
-        }
+//        let realm = myRealm
+//        do {
+//            try myRealm.write {
+//                Current.result.results.removeAll()
+//            }
+//        } catch {
+//            print("Could not write to database: ", error)
+//        }
+//        
+//        for jobKpi in Current.job.kpis {
+//            let listTblResultKpi = myRealm.objects(TblResultKpi.self).filter("kpi_id = \(jobKpi.result_id)")
+//            var tblResultKpi = TblResultKpi()
+//            if let tmp = listTblResultKpi.first {
+//                tblResultKpi = tmp
+//            }
+//            else {
+//                tblResultKpi.kpi_id = jobKpi.result_id
+//            }
+//            do {
+//                try myRealm.write {
+//                    Current.result.results.append(tblResultKpi)
+//                }
+//            } catch {
+//                print("Could not write to database: ", error)
+//            }
+//        }
     }
     
     class func removeResult (withId id: Int) {
-        let realm = LcRealm.shared.realm!
-        let kpiResult = realm.objects(TblResult.self).filter("id = \(id)")
-        let tblResKpi = realm.objects(TblResultKpi.self).filter("jobId = \(id)")
+        let kpiResult = myRealm.objects(TblResult.self).filter("id = \(id)")
+        let tblResKpi = myRealm.objects(TblResultKpi.self).filter("jobId = \(id)")
         do {
-            try realm.write {
-                realm.delete(kpiResult)
-                realm.delete(tblResKpi)
-            }
-        } catch {
-            print("Could not write to database: ", error)
-        }
-    }
-    
-    class func saveResult (tblResultKpi: TblResultKpi) {
-        let realm = LcRealm.shared.realm!
-        do {
-            try realm.write {
-                realm.add(tblResultKpi, update: true)
+            try myRealm.write {
+                myRealm.delete(kpiResult)
+                myRealm.delete(tblResKpi)
             }
         } catch {
             print("Could not write to database: ", error)
@@ -65,8 +53,7 @@ class TblResultUtil {
     }
     
     class func loadCurrent () -> TblResult {
-        let realm = LcRealm.shared.realm!
-        let tblList = realm.objects(TblResult.self).filter("id = \(Current.job.jobId)")
+        let tblList = myRealm.objects(TblResult.self).filter("id = \(Current.job.jobId)")
         if tblList.count == 0 {
             return TblResult()
         }
@@ -74,8 +61,7 @@ class TblResultUtil {
     }
     
     class func createCurrent() -> TblResult {
-        let realm = LcRealm.shared.realm!
-        let tblResultList = realm.objects(TblResult.self).filter("id = %@", Current.job.jobId)
+        let tblResultList = myRealm.objects(TblResult.self).filter("id = %@", Current.job.jobId)
         var tblResult = TblResult()
         if let tmp = tblResultList.first{
             tblResult = tmp
@@ -84,7 +70,7 @@ class TblResultUtil {
             tblResult.id = Current.job.jobId
         }
         do {
-            try realm.write {
+            try myRealm.write {
                 tblResult.pos_end = Current.job.pos_end
                 tblResult.pos_end_date = Current.job.end_date.toString(withFormat: Config.DateFmt.DataJson)
                 tblResult.pos_end_lat = Current.job.pos_end_lat
@@ -92,7 +78,7 @@ class TblResultUtil {
                 tblResult.pos_start_date = Current.job.start_date.toString(withFormat: Config.DateFmt.DataJson)
                 tblResult.pos_start_lat = Current.job.pos_start_lat
                 tblResult.pos_start_lng = Current.job.pos_start_lng
-                realm.add(tblResult, update: true)
+                myRealm.add(tblResult, update: true)
                 
                 for jobKpi in Current.job.kpis {
                     let resultKpi = TblResultKpi()
