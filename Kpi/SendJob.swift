@@ -23,7 +23,7 @@ class SendJob {
     
     private func writeJson (_ json: Data) -> String {
         do {
-            try json.write(to: URL.init(fileURLWithPath: MYJob.JobPath + Config.File.json))
+            try json.write(to: URL.init(fileURLWithPath: Current.workingPath + Config.File.json))
             return readFiles ()
 
         } catch {
@@ -33,7 +33,7 @@ class SendJob {
 
     private func readFiles () -> String {
         do {
-            let filesToZip = try fm.contentsOfDirectory(at: URL.init(string: MYJob.JobPath)!,
+            let filesToZip = try fm.contentsOfDirectory(at: URL.init(string: Current.workingPath)!,
                                                                 includingPropertiesForKeys: nil,
                                                                 options: [])
         
@@ -53,7 +53,7 @@ class SendJob {
 
     private func removeFiles () -> String {
         do {
-            try fm.removeItem(atPath: MYJob.JobPath)
+            try fm.removeItem(atPath: Current.workingPath)
             let id = Current.job.jobId
             TblJobUtil.removeJob(WithId: id)
             TblResultUtil.removeResult(withId: id)

@@ -9,7 +9,7 @@
 import UIKit
 
 class Maps {
-    init(lat: Double, lon: Double, name: String) {
+    class func show(lat: Double, lon: Double, name: String) {
         if lat == 0 || lon == 0 {
             return
         }

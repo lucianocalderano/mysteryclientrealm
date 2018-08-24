@@ -31,8 +31,6 @@ class JobDetail: MYViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        initialize()
-
         MYGps.shared.start()
         
         for btn in [contBtn, tickBtn] as! [MYButton] {
@@ -65,9 +63,7 @@ class JobDetail: MYViewController {
     }
     
     @IBAction func mapsTapped () {
-        _ = Maps.init(lat: Current.job.store_latitude,
-                      lon: Current.job.store_longitude,
-                      name: Current.job.store_name)
+        Maps.show(lat: Current.job.store_latitude, lon: Current.job.store_longitude, name: Current.job.store_name)
     }
     
     @IBAction func descTapped () {
@@ -148,20 +144,6 @@ class JobDetail: MYViewController {
     
     // MARK: - private
     
-    private func initialize () {
-        let path = "\(Config.Path.docs)/\(Current.job.jobId)"
-        let fm = FileManager.default
-        if fm.fileExists(atPath: path) == false {
-            do {
-                try fm.createDirectory(atPath: path,
-                                       withIntermediateDirectories: true,
-                                       attributes: nil)
-            } catch let error as NSError {
-                print("Unable to create directory \(error.debugDescription)")
-            }
-        }
-    }
-    
     private func showData () {
         header?.header.titleLabel.text = Current.job.store_name
         infoLabel.text =
@@ -201,7 +183,6 @@ class JobDetail: MYViewController {
             strtBtn.setTitleColor(UIColor.white, for: .normal);
         } else if Current.result.pos_end == false {
             stopBtn.isEnabled = true
-//            stopBtn.backgroundColor = UIColor.white
         }
     }
 }
@@ -213,14 +194,6 @@ extension JobDetail {
             ctrl.page = urlPage
         }
         navigationController?.show(ctrl, sender: self)        
-        //        var page = urlPage
-        //        if page.isEmpty {
-        //            page = Config.Url.home + type.rawValue
-        //            if id > 0 {
-        //                page += String(id)
-        //            }
-        //        }
-        //        UIApplication.shared.openURL(URL.init(string: page)!)
     }
 }
 

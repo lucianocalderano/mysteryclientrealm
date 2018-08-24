@@ -122,7 +122,7 @@ class KpiQuestView: KpiBaseView {
     func showAtch () {
         atchImage.image = nil
         if currentResult.attachment.isEmpty == false {
-            let fileName = MYJob.JobPath + currentResult.attachment
+            let fileName = Current.workingPath + currentResult.attachment
             let imageURL = URL(fileURLWithPath: fileName)
             if let image = UIImage(contentsOfFile: imageURL.path) {
                 atchImage.image = image
@@ -157,7 +157,7 @@ class KpiQuestView: KpiBaseView {
         mainVC.view.addSubview(imv)
         
         func showAlert() {
-            let fileName = MYJob.JobPath + currentResult.attachment
+            let fileName = Current.workingPath + currentResult.attachment
             mainVC.alert(Lng("atchRemove"), message: "", cancelBlock: {
                 (cancel) in
                 imv.removeFromSuperview()
@@ -289,7 +289,7 @@ extension KpiQuestView: UITextViewDelegate {
 extension KpiQuestView: KpiAtchDelegate {
     func kpiAtchSelectedImage(withData data: Data) {
         setAtchName(file: "\(Current.job.reference).\(currentJobKpi.id).jpg")
-        let fileName = MYJob.JobPath + currentResult.attachment
+        let fileName = Current.workingPath + currentResult.attachment
         
         do {
             try data.write(to: URL.init(string: Config.File.urlPrefix + fileName)!)

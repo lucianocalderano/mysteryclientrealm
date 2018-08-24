@@ -10,127 +10,19 @@ import Foundation
 import RealmSwift
 
 protocol MYJobDelegate {
-    func currentJobSuccess(_ loadJob: MYJob)
-    func currentJobError(_ loadJob: MYJob, errorCode: String, message: String)
+    func updateCurrentJobSuccess()
+    func updateCurrentJobError(_ errorCode: String, message: String)
 }
 
-class MYJob {
-    public static var JobPath = ""
-    public static var KpiKeyList = [Int]() // Di comodo per evitare la ricerca del kpi.id nell'array dei kpi
+class TblJobUtil {
+    class func getJobs() -> Results<TblJob>! {
+        let realm = LcRealm.shared.realm!
+        return realm.objects(TblJob.self)
+    }
     
     class func updateCurrent (_ job: TblJob, delegate: MYJobDelegate?) {
         Current.job = job
-        MYJob.JobPath = Config.Path.docs + "\(Current.job.jobId)" + "/"
-        let me = MYJob()
-        me.updateCurrentJob(delegate: delegate)
-    }
-    
-    private var delegate: MYJobDelegate?
-    private let fm = FileManager.default
-    
-    func updateCurrentJob (delegate: MYJobDelegate?) {
-        self.delegate = delegate
-        
-        if errorOnCraateWorkingPath() {
-            return
-        }
-        
-        if Current.job.kpis.count == 0 {
-            downloadJobDetail ()
-        } else {
-            Current.result = TblResultUtil.loadCurrent()
-            openJobDetail()
-        }
-    }
-    
-    private func errorOnCraateWorkingPath() -> Bool {
-        if fm.fileExists(atPath: MYJob.JobPath) {
-            return false
-        }
-        do {
-            try fm.createDirectory(atPath: MYJob.JobPath,
-                                   withIntermediateDirectories: true,
-                                   attributes: nil)
-        } catch let error as NSError {
-            self.delegate?.currentJobError(self, errorCode: "Unable to create directory", message: error.debugDescription)
-            return true
-        }
-        return false
-    }
-    
-    private func downloadJobDetail () {
-        User.shared.getUserToken(completion: {
-            self.downloadJobDetailAfterToken()
-        }) {
-            (errorCode, message) in
-            self.delegate?.currentJobError(self, errorCode: errorCode, message: message)
-        }
-    }
-    
-    private func downloadJobDetailAfterToken () {
-        let param = [ "object" : "job", "object_id":  Current.job.jobId ] as JsonDict
-        let request = MYHttp.init(.get, param: param)
-        
-        request.load( { (response) in
-            Current.job = TblJobUtil.addJob(withDict: response.dictionary("job"))
-            Current.result = TblResultUtil.createCurrent()
-            if Current.job.irregular == true {
-                for kpi in Current.job.kpis {
-                    if kpi.result_url.isEmpty == false {
-                        self.downloadAtch(url: kpi.result_url, kpiId: kpi.id)
-                    }
-                }
-            }
-            self.openJobDetail()
-        }) {
-            (errorCode, message) in
-            self.delegate?.currentJobError(self, errorCode: errorCode, message: message)
-        }
-    }
-    
-    private func openJobDetail () {
-        MYJob.KpiKeyList.removeAll()
-        TblJobUtil.setKpiToValid()
-        for kpi in Current.job.kpis {
-            MYJob.KpiKeyList.append(kpi.id)
-        }
-        
-        self.delegate?.currentJobSuccess(self)
-    }
-    
-    private func downloadAtch (url urlString: String, kpiId: Int) {
-        let param = [
-            "object" : "job",
-            "result_attachment":  Current.job.jobId
-            ] as JsonDict
-        let request = MYHttp.init(.get, param: param, showWheel: false)
-        
-        request.loadAtch(url: urlString, { (response) in
-            do {
-                let dict = try JSONSerialization.jsonObject(with: response, options: []) as! JsonDict
-                print(dict)
-            } catch {
-                let suffix = UIImage.init(data: response) == nil ? "pdf" : "jpg"
-                let dest = MYJob.JobPath + "\(Current.job.reference).\(kpiId)." + suffix
-                print(dest)
-                
-                do {
-                    try response.write(to: URL.init(string: Config.File.urlPrefix + dest)!)
-                } catch {
-                    print("Unable to load data: \(error)")
-                }
-            }
-        })
-    }
-}
-
-//MARK: -
-
-class TblJobUtil {
-    class func getJobs(withId id: Int = 0) -> Results<TblJob>! {
-        let realm = LcRealm.shared.realm!
-        let filter = (id > 0) ? "jobId = \(id)" : "jobId > 0"
-        return realm.objects(TblJob.self).filter(filter)
+        TblJobUtil.JobCurrent().updateCurrentJob(delegate: delegate)
     }
     
     class func removeJob (WithId id: Int) {
@@ -297,5 +189,112 @@ class TblJobUtil {
         }
         
         return tblJpb
+    }
+    
+    //MARK: -
+    
+    class JobCurrent {
+        private var delegate: MYJobDelegate?
+        private let fm = FileManager.default
+        
+        func updateCurrentJob (delegate: MYJobDelegate?) {
+            self.delegate = delegate
+
+            if errorOnCraateWorkingPath() {
+                return
+            }
+            
+            if Current.job.kpis.count == 0 {
+                downloadJobDetail ()
+            } else {
+                Current.result = TblResultUtil.loadCurrent()
+                openJobDetail()
+            }
+        }
+        
+        private func errorOnCraateWorkingPath() -> Bool {
+            if fm.fileExists(atPath: Current.workingPath) {
+                return false
+            }
+            do {
+                try fm.createDirectory(atPath: Current.workingPath,
+                                       withIntermediateDirectories: true,
+                                       attributes: nil)
+            } catch let error as NSError {
+                self.delegate?.updateCurrentJobError("Unable to create directory", message: error.debugDescription)
+                return true
+            }
+            return false
+        }
+        
+        private func downloadJobDetail () {
+            User.shared.getUserToken(completion: {
+                self.downloadJobDetailAfterToken()
+            }) {
+                (errorCode, message) in
+                self.delegate?.updateCurrentJobError(errorCode, message: message)
+            }
+        }
+        
+        private func downloadJobDetailAfterToken () {
+            let param = [ "object" : "job", "object_id":  Current.job.jobId ] as JsonDict
+            let request = MYHttp.init(.get, param: param)
+            
+            request.load( { (response) in
+                Current.job = TblJobUtil.addJob(withDict: response.dictionary("job"))
+                Current.result = TblResultUtil.createCurrent()
+                self.startDownloadAttachment()
+                self.openJobDetail()
+            }) { (errorCode, message) in
+                self.delegate?.updateCurrentJobError(errorCode, message: message)
+            }
+        }
+        
+        private func openJobDetail () {
+            Current.kpiKeyList.removeAll()
+            TblJobUtil.setKpiToValid()
+            for kpi in Current.job.kpis {
+                Current.kpiKeyList.append(kpi.id)
+            }
+            self.delegate?.updateCurrentJobSuccess()
+        }
+        
+//MARK: - DownloadAttachment
+        
+        private func startDownloadAttachment() {
+            guard Current.job.irregular else {
+                return
+            }
+            for kpi in Current.job.kpis {
+                if kpi.result_url.isEmpty == false {
+                    self.downloadAtch(url: kpi.result_url, kpiId: kpi.id)
+                }
+            }
+        }
+        
+        private func downloadAtch (url urlString: String, kpiId: Int) {
+            let param = [
+                "object" : "job",
+                "result_attachment":  Current.job.jobId
+                ] as JsonDict
+            let request = MYHttp.init(.get, param: param, showWheel: false)
+            
+            request.loadAtch(url: urlString, { (response) in
+                do {
+                    let dict = try JSONSerialization.jsonObject(with: response, options: []) as! JsonDict
+                    print(dict)
+                } catch {
+                    let suffix = UIImage.init(data: response) == nil ? "pdf" : "jpg"
+                    let dest = Current.workingPath + "\(Current.job.reference).\(kpiId)." + suffix
+                    print(dest)
+                    
+                    do {
+                        try response.write(to: URL.init(string: Config.File.urlPrefix + dest)!)
+                    } catch {
+                        print("Unable to load data: \(error)")
+                    }
+                }
+            })
+        }
     }
 }

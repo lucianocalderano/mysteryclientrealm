@@ -7,53 +7,6 @@
 //
 
 import Foundation
-
-class MYResult {
-    class func createJson() -> JsonDict {
-        var resultDict = JsonDict()
-        var resultArray = [JsonDict]()
-        let result = Current.result
-        
-        for kpiResult in result.results {
-            let dict:JsonDict = [
-                "kpi_id"     : kpiResult.kpi_id,
-                "value"      : kpiResult.value,
-                "notes"      : kpiResult.notes,
-                "attachment" : kpiResult.attachment,
-                ]
-            resultArray.append(dict)
-        }
-        
-        let dictPos:JsonDict = [
-            "start"      : result.pos_start,
-            "start_date" : result.pos_start_date,
-            "start_lat"  : result.pos_start_lat,
-            "start_lng"  : result.pos_start_lng,
-            "end"        : result.pos_end,
-            "end_date"   : result.pos_end_date,
-            "end_lat"    : result.pos_end_lat,
-            "end_lng"    : result.pos_end_lng,
-            ]
-        
-        resultDict = [
-            "id"                        : result.id,
-            "estimate_date"             : result.estimate_date,
-            "compiled"                  : result.compiled,
-            "compilation_date"          : result.compilation_date,
-            "updated"                   : result.updated,
-            "update_date"               : result.update_date,
-            "execution_date"            : result.execution_date,
-            "execution_start_time"      : result.execution_start_time,
-            "execution_end_time"        : result.execution_end_time,
-            "store_closed"              : result.store_closed,
-            "comment"                   : result.comment,
-            "results"                   : resultArray,
-            "positioning"               : dictPos
-            ] as JsonDict
-        return resultDict
-    }
-}
-
 import RealmSwift
 
 class TblResultUtil {
@@ -157,4 +110,49 @@ class TblResultUtil {
         }
         return tblResult
     }
+
+    class func createJson() -> JsonDict {
+        var resultDict = JsonDict()
+        var resultArray = [JsonDict]()
+        let result = Current.result
+        
+        for kpiResult in result.results {
+            let dict:JsonDict = [
+                "kpi_id"     : kpiResult.kpi_id,
+                "value"      : kpiResult.value,
+                "notes"      : kpiResult.notes,
+                "attachment" : kpiResult.attachment,
+                ]
+            resultArray.append(dict)
+        }
+        
+        let dictPos:JsonDict = [
+            "start"      : result.pos_start,
+            "start_date" : result.pos_start_date,
+            "start_lat"  : result.pos_start_lat,
+            "start_lng"  : result.pos_start_lng,
+            "end"        : result.pos_end,
+            "end_date"   : result.pos_end_date,
+            "end_lat"    : result.pos_end_lat,
+            "end_lng"    : result.pos_end_lng,
+            ]
+        
+        resultDict = [
+            "id"                        : result.id,
+            "estimate_date"             : result.estimate_date,
+            "compiled"                  : result.compiled,
+            "compilation_date"          : result.compilation_date,
+            "updated"                   : result.updated,
+            "update_date"               : result.update_date,
+            "execution_date"            : result.execution_date,
+            "execution_start_time"      : result.execution_start_time,
+            "execution_end_time"        : result.execution_end_time,
+            "store_closed"              : result.store_closed,
+            "comment"                   : result.comment,
+            "results"                   : resultArray,
+            "positioning"               : dictPos
+            ] as JsonDict
+        return resultDict
+    }
 }
+

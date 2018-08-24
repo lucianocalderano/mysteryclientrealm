@@ -50,3 +50,41 @@ struct Config {
 
     static let maxPicSize = 1200
 }
+
+class Current {
+    public static var job: TblJob! {
+        didSet {
+            Current.workingPath = Config.Path.docs + "\(Current.job.jobId)" + "/"
+        }
+    }
+    public static var result = TblResult()
+    public static var workingPath = ""
+    public static var kpiKeyList = [Int]() // Di comodo per evitare la ricerca del kpi.id nell'array dei kpi
+}
+
+import RealmSwift
+class LcRealm {
+    public static let shared = LcRealm()
+    public var realm: Realm!
+    init() {
+        do {
+            realm = try Realm()
+        } catch let error as NSError {
+            assertionFailure("Realm error: \(error)")
+        }
+    }
+    
+    class func begin() {
+        LcRealm.shared.realm.beginWrite()
+    }
+    class func commit() {
+        try! LcRealm.shared.realm.commitWrite()
+    }
+    func clearAll() {
+        try! realm.write {
+            realm.deleteAll()
+        }
+        return
+    }
+}
+

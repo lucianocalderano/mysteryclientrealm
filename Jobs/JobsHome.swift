@@ -13,7 +13,7 @@ class JobsHome: MYViewController {
     class func Instance() -> JobsHome {
         return Instance(sbName: "Jobs", isInitial: true) as! JobsHome
     }
-
+    
     @IBOutlet private var tableView: UITableView!
     private let wheel = MYWheel()
     private var items = TblJobUtil.getJobs()!
@@ -34,53 +34,43 @@ class JobsHome: MYViewController {
     }
     
     private func loadJobs () {
-        getList(done: { (items) in
-            func zipExists (id: Int) -> Bool {
-                let file = MYZip.getZipFilePath(id: id)
-                return FileManager.default.fileExists(atPath: file)
-            }
-            
-            for item in items {
-                if item.jobId > 0 {
-                    if zipExists(id: item.jobId) {
-                        TblJobUtil.removeJob(WithId: item.jobId)
-                    }
-                }
-            }
-            
-            self.items = TblJobUtil.getJobs()
-            self.tableView.reloadData()
-        })
-    }
-}
-
-// MARK: - Job List
-
-extension JobsHome {
-    private func getList(done: @escaping (Results<TblJob>) -> () = { array in }) {
         if items.count > 0 {
-            done (items)
             return
         }
-
         User.shared.getUserToken(completion: {
-            loadJobList()
+            self.loadJobList()
         }) { (errorCode, message) in
             self.alert(errorCode, message: message, okBlock: nil)
         }
+    }
+    
+    private func loadJobList () {
+        let param = [ "object" : "jobs_list" ]
+        let request = MYHttp.init(.get, param: param)
+        request.load( { (response) in
+            self.updateJob(jobsArray: response.array("jobs") as! [JsonDict])
+        }) { (errorCode, message) in
+            self.alert(errorCode, message: message, okBlock: nil)
+        }
+    }
+    
+    private func updateJob (jobsArray: [JsonDict]) {
+        for dict in jobsArray {
+            _ = TblJobUtil.addJob(withDict: dict)
+        }
         
-        func loadJobList () {
-            let param = [ "object" : "jobs_list" ]
-            let request = MYHttp.init(.get, param: param)
-            request.load( { (response) in
-                for dict in response.array("jobs") as! [JsonDict] {
-                    _ = TblJobUtil.addJob(withDict: dict)
-                }
-                done (TblJobUtil.getJobs())
-            }) { (errorCode, message) in
-                self.alert(errorCode, message: message, okBlock: nil)
+        for item in TblJobUtil.getJobs() {
+            if item.jobId == 0 {
+                continue
+            }
+            let file = MYZip.getZipFilePath(id: item.jobId)
+            if  FileManager.default.fileExists(atPath: file) {
+                TblJobUtil.removeJob(WithId: item.jobId)
             }
         }
+        
+        self.items = TblJobUtil.getJobs()
+        self.tableView.reloadData()
     }
 }
 
@@ -120,9 +110,7 @@ extension JobsHome: UITableViewDelegate {
 
 extension JobsHome: JobsHomeCellDelegate {
     func mapTapped(_ sender: JobsHomeCell, tblJob: TblJob) {
-        _ = Maps.init(lat: Current.job.store_latitude,
-                      lon: Current.job.store_longitude,
-                      name: Current.job.store_name)
+       Maps.show(lat: Current.job.store_latitude, lon: Current.job.store_longitude, name: Current.job.store_name)
     }
 }
 
@@ -131,18 +119,18 @@ extension JobsHome: JobsHomeCellDelegate {
 extension JobsHome {
     private func selectedJob (_ job: TblJob) {
         wheel.start(self.view)
-        MYJob.updateCurrent(job, delegate: self)
+        TblJobUtil.updateCurrent(job, delegate: self)
     }
 }
 
 extension JobsHome: MYJobDelegate {
-    func currentJobSuccess(_ loadJob: MYJob) {
+    func updateCurrentJobSuccess() {
         wheel.stop()
         let vc = JobDetail.Instance()
         self.navigationController?.show(vc, sender: self)
     }
-
-    func currentJobError(_ loadJob: MYJob, errorCode: String, message: String) {
+    
+    func updateCurrentJobError(_ errorCode: String, message: String) {
         wheel.stop()
         self.alert(errorCode, message: message, okBlock: nil)
     }

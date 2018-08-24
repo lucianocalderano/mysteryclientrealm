@@ -163,7 +163,7 @@ extension KpiMain: KpiDelegate {
 extension KpiMain {
     private func sendKpiResult () {
         let sendJob = SendJob()
-        let dict = MYResult.createJson()
+        let dict = TblResultUtil.createJson()
         let result = sendJob.createZipFileWithDict(dict)
         
         guard result.isEmpty else {
