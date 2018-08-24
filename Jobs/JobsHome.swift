@@ -16,7 +16,7 @@ class JobsHome: MYViewController {
 
     @IBOutlet private var tableView: UITableView!
     private let wheel = MYWheel()
-    private var items = DB.jobs()!
+    private var items = TblJobUtil.getJobs()!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,12 +24,12 @@ class JobsHome: MYViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        MYResult.current = TblResult()
+        Current.result = TblResult()
         loadJobs()
     }
     
     override func headerViewDxTapped() {
-        DB.clearAll()
+        LcRealm.shared.clearAll()
         loadJobs()
     }
     
@@ -43,12 +43,12 @@ class JobsHome: MYViewController {
             for item in items {
                 if item.jobId > 0 {
                     if zipExists(id: item.jobId) {
-                        MYJob.removeJobWithId(item.jobId)
+                        TblJobUtil.removeJob(WithId: item.jobId)
                     }
                 }
             }
             
-            self.items = DB.jobs()
+            self.items = TblJobUtil.getJobs()
             self.tableView.reloadData()
         })
     }
@@ -57,7 +57,7 @@ class JobsHome: MYViewController {
 // MARK: - Job List
 
 extension JobsHome {
-    private func getList(done: @escaping (Results<TblJob>) -> () = { array in })  {
+    private func getList(done: @escaping (Results<TblJob>) -> () = { array in }) {
         if items.count > 0 {
             done (items)
             return
@@ -65,8 +65,7 @@ extension JobsHome {
 
         User.shared.getUserToken(completion: {
             loadJobList()
-        }) {
-            (errorCode, message) in
+        }) { (errorCode, message) in
             self.alert(errorCode, message: message, okBlock: nil)
         }
         
@@ -75,11 +74,10 @@ extension JobsHome {
             let request = MYHttp.init(.get, param: param)
             request.load( { (response) in
                 for dict in response.array("jobs") as! [JsonDict] {
-                    LcRealm.shared.addJob(withDict: dict)
+                    _ = TblJobUtil.addJob(withDict: dict)
                 }
-                done (DB.jobs())
-            }) {
-                (errorCode, message) in
+                done (TblJobUtil.getJobs())
+            }) { (errorCode, message) in
                 self.alert(errorCode, message: message, okBlock: nil)
             }
         }
@@ -122,9 +120,9 @@ extension JobsHome: UITableViewDelegate {
 
 extension JobsHome: JobsHomeCellDelegate {
     func mapTapped(_ sender: JobsHomeCell, tblJob: TblJob) {
-        _ = Maps.init(lat: MYJob.current.store_latitude,
-                      lon: MYJob.current.store_longitude,
-                      name: MYJob.current.store_name)
+        _ = Maps.init(lat: Current.job.store_latitude,
+                      lon: Current.job.store_longitude,
+                      name: Current.job.store_name)
     }
 }
 
@@ -133,7 +131,7 @@ extension JobsHome: JobsHomeCellDelegate {
 extension JobsHome {
     private func selectedJob (_ job: TblJob) {
         wheel.start(self.view)
-        MYJob.updateCurrentJob(job, delegate: self)
+        MYJob.updateCurrent(job, delegate: self)
     }
 }
 

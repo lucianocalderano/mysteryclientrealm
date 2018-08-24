@@ -44,7 +44,7 @@ class SendJob {
     }
 
     private func zipFiles (_ filesToZip: [URL]) -> String {
-        let zipFile = URL.init(fileURLWithPath: MYZip.getZipFilePath(id: MYJob.current.jobId))
+        let zipFile = URL.init(fileURLWithPath: MYZip.getZipFilePath(id: Current.job.jobId))
         if MYZip.zipFiles(filesToZip, toZipFile: zipFile) {
             return removeFiles()
         }
@@ -54,8 +54,8 @@ class SendJob {
     private func removeFiles () -> String {
         do {
             try fm.removeItem(atPath: MYJob.JobPath)
-            let id = MYJob.current.jobId
-            MYJob.removeJobWithId(id)
+            let id = Current.job.jobId
+            TblJobUtil.removeJob(WithId: id)
             TblResultUtil.removeResult(withId: id)
             return ""
         } catch {

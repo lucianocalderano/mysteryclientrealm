@@ -30,9 +30,9 @@ class KpiInitView: KpiBaseView {
     
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
-        undondeText.text = MYResult.current.comment
-        if MYResult.current.execution_date.isEmpty == false {
-            let d = MYResult.current.execution_date + " " + MYResult.current.execution_start_time + ":00"
+        undondeText.text = Current.result.comment
+        if Current.result.execution_date.isEmpty == false {
+            let d = Current.result.execution_date + " " + Current.result.execution_start_time + ":00"
             let date = d.toDate(withFormat: Config.DateFmt.DataOraJson)
             datePicker.date = date
         }
@@ -45,8 +45,8 @@ class KpiInitView: KpiBaseView {
         }
         
         LcRealm.begin()
-        MYResult.current.execution_date = datePicker.date.toString(withFormat: Config.DateFmt.DataJson)
-        MYResult.current.execution_start_time = datePicker.date.toString(withFormat: Config.DateFmt.Ora)
+        Current.result.execution_date = datePicker.date.toString(withFormat: Config.DateFmt.DataJson)
+        Current.result.execution_start_time = datePicker.date.toString(withFormat: Config.DateFmt.Ora)
         LcRealm.commit()
         completion (.next)
     }

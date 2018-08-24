@@ -288,7 +288,7 @@ extension KpiQuestView: UITextViewDelegate {
 
 extension KpiQuestView: KpiAtchDelegate {
     func kpiAtchSelectedImage(withData data: Data) {
-        setAtchName(file: "\(MYJob.current.reference).\(currentJobKpi.id).jpg")
+        setAtchName(file: "\(Current.job.reference).\(currentJobKpi.id).jpg")
         let fileName = MYJob.JobPath + currentResult.attachment
         
         do {

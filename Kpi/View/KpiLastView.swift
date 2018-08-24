@@ -21,7 +21,7 @@ class KpiLastView: KpiBaseView {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        finalText.text = MYResult.current.comment
+        finalText.text = Current.result.comment
         finalText.layer.borderColor = UIColor.lightGray.cgColor
         finalText.layer.borderWidth = 1
         finalText.delegate = self
@@ -29,41 +29,41 @@ class KpiLastView: KpiBaseView {
     
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
-        if MYResult.current.compilation_date.isEmpty == false {
-            let d = MYResult.current.compilation_date
+        if Current.result.compilation_date.isEmpty == false {
+            let d = Current.result.compilation_date
             let date = d.toDate(withFormat: Config.DateFmt.DataOraJson)
             datePicker.date = date
         }
         counterLabel.text = ""
-        if (MYJob.current.comment_min == 0 && MYJob.current.comment_max == 0) {
+        if (Current.job.comment_min == 0 && Current.job.comment_max == 0) {
             counterLabel.isHidden = true
         }
         else {
             minmax = ""
-            if MYJob.current.comment_min > 0 {
-                minmax = minmax + " Min." + String(MYJob.current.comment_min)
+            if Current.job.comment_min > 0 {
+                minmax = minmax + " Min." + String(Current.job.comment_min)
             }
-            if MYJob.current.comment_max > 0 {
-                minmax = minmax + " Max." + String(MYJob.current.comment_max)
+            if Current.job.comment_max > 0 {
+                minmax = minmax + " Max." + String(Current.job.comment_max)
             }
             counterLabel.text = minmax
         }
     }
     
     override func checkData(completion: @escaping (KpiResultType) -> ()) {
-        if finalText.text.count < MYJob.current.comment_min {
+        if finalText.text.count < Current.job.comment_min {
             completion(.errComment)
             return
         }
-        if MYJob.current.comment_max > 0 && finalText.text.count > MYJob.current.comment_max {
+        if Current.job.comment_max > 0 && finalText.text.count > Current.job.comment_max {
             completion(.errComment)
             return
         }
         LcRealm.begin()
-        MYResult.current.comment = finalText.text!
-        MYResult.current.compiled = true
-        MYResult.current.compilation_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
-        MYResult.current.execution_end_time = datePicker.date.toString(withFormat: Config.DateFmt.Ora)
+        Current.result.comment = finalText.text!
+        Current.result.compiled = true
+        Current.result.compilation_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
+        Current.result.execution_end_time = datePicker.date.toString(withFormat: Config.DateFmt.Ora)
         LcRealm.commit()
         completion (.last)
     }
@@ -76,7 +76,7 @@ extension KpiLastView: UITextViewDelegate {
             return false
         }
         if text != "" {
-            if MYJob.current.comment_max > 0 && range.location >= MYJob.current.comment_max {
+            if Current.job.comment_max > 0 && range.location >= Current.job.comment_max {
                 return false
             }
         }

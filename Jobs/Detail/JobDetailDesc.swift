@@ -17,12 +17,12 @@ class JobDetailDesc: UIView {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        var desc = MYJob.current.description
-        if MYJob.current.additional_description.isEmpty == false {
-            desc += "\n\n- Descrizione aggiuntiva\n\n" + MYJob.current.additional_description + "\n\n"
+        var desc = Current.job.description
+        if Current.job.additional_description.isEmpty == false {
+            desc += "\n\n- Descrizione aggiuntiva\n\n" + Current.job.additional_description + "\n\n"
         }
-        if MYJob.current.details.isEmpty == false {
-            desc += "\n\n- Dettagli orario\n\n" + MYJob.current.details + "\n\n"
+        if Current.job.details.isEmpty == false {
+            desc += "\n\n- Dettagli orario\n\n" + Current.job.details + "\n\n"
         }
         jobDesc.text = desc
     }

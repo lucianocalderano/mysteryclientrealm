@@ -28,7 +28,7 @@ class KpiMain: MYViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let idx = MYJob.current.kpis.count
+        let idx = Current.job.kpis.count
         
         warnBtn.isHidden = true
         self.view.bringSubview(toFront: warnBtn)
@@ -42,7 +42,7 @@ class KpiMain: MYViewController {
             kpiView = KpiQuestView.Instance()
             kpiView.kpiIndex = currentIndex
             scroll.backgroundColor = UIColor.white
-            let kpi = MYJob.current.kpis[currentIndex]
+            let kpi = Current.job.kpis[currentIndex]
             warnBtn.isHidden = (kpi.result_irregular == false)
         }
         kpiView.mainVC = self
@@ -52,7 +52,7 @@ class KpiMain: MYViewController {
         
         myKeyboard = MYKeyboard(vc: self, scroll: scroll)
         
-        headerTitle = MYJob.current.store_name
+        headerTitle = Current.job.store_name
         
         for btn in [backBtn, nextBtn] as! [MYButton] {
             let ico = btn.image(for: .normal)?.resize(12)
@@ -89,7 +89,7 @@ class KpiMain: MYViewController {
     }
     
     @IBAction func warnTapped () {
-        let kpi = MYJob.current.kpis[currentIndex]
+        let kpi = Current.job.kpis[currentIndex]
         self.alert("Irregolare", message: kpi.result_irregular_note)
     }
     
@@ -102,8 +102,8 @@ class KpiMain: MYViewController {
         case .last:
             sendKpiResult()
         case .errComment:
-            let max = MYJob.current.comment_max > 0 ? MYJob.current.comment_max : 999
-            let s = "La lunghezza dell commento deve essere tra \(MYJob.current.comment_min) e \(max) caratteri"
+            let max = Current.job.comment_max > 0 ? Current.job.comment_max : 999
+            let s = "La lunghezza dell commento deve essere tra \(Current.job.comment_min) e \(max) caratteri"
             alert(Lng("error"), message: s)
         case .errValue:
             alert(Lng("error"), message: Lng("noValue"))
@@ -120,12 +120,12 @@ class KpiMain: MYViewController {
     private func showPageNum() {
         if let label = header?.header.kpiLabel {
             label.isHidden = false
-            label.text = "\(currentIndex + 2)/\(MYJob.current.kpis.count + 2)"
+            label.text = "\(currentIndex + 2)/\(Current.job.kpis.count + 2)"
         }
     }
     
     private func nextKpi () {
-        let lastKpi = MYJob.current.kpis.count - 1
+        let lastKpi = Current.job.kpis.count - 1
         let loadCtrlWithIndex: (Int) -> () = { index in
             let vc = KpiMain.Instance()
             vc.currentIndex = index
@@ -133,11 +133,11 @@ class KpiMain: MYViewController {
         }
         
         if currentIndex == lastKpi {
-            loadCtrlWithIndex (MYJob.current.kpis.count)
+            loadCtrlWithIndex (Current.job.kpis.count)
             return
         }
         for index in currentIndex + 1...lastKpi {
-            let kpi = MYJob.current.kpis[index]            
+            let kpi = Current.job.kpis[index]            
             if kpi.isValid == true {
                 loadCtrlWithIndex(index)
                 return

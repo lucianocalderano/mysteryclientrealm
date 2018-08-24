@@ -9,42 +9,12 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Cls/Model/LcrRealm.swift"
-            timestampString = "556805878.36868"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Kpi/KpiMainUtil.swift"
-            timestampString = "556724679.021901"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
-            landmarkName = "fixValuation(isValid:dep:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Cls/Class/MYResult.swift"
-            timestampString = "556805878.3687921"
+            timestampString = "556810600.17541"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "108"
-            endingLineNumber = "108"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
             landmarkName = "saveResult(tblResultKpi:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -56,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Cls/Class/MYResult.swift"
-            timestampString = "556805878.36887"
+            timestampString = "556810600.175539"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
             landmarkName = "firstLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -72,12 +42,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Cls/Class/MYResult.swift"
-            timestampString = "556805878.368939"
+            timestampString = "556810600.17563"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "160"
-            endingLineNumber = "160"
-            landmarkName = "create()"
+            startingLineNumber = "99"
+            endingLineNumber = "99"
+            landmarkName = "removeResult(withId:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

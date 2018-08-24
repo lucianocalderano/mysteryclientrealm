@@ -61,13 +61,13 @@ class JobDetail: MYViewController {
     
     // MARK: - actions
     @IBAction func euroTapped () {
-        alert("Descrizione compenso", message: MYJob.current.fee_desc)
+        alert("Descrizione compenso", message: Current.job.fee_desc)
     }
     
     @IBAction func mapsTapped () {
-        _ = Maps.init(lat: MYJob.current.store_latitude,
-                      lon: MYJob.current.store_longitude,
-                      name: MYJob.current.store_name)
+        _ = Maps.init(lat: Current.job.store_latitude,
+                      lon: Current.job.store_longitude,
+                      name: Current.job.store_name)
     }
     
     @IBAction func descTapped () {
@@ -84,24 +84,23 @@ class JobDetail: MYViewController {
     }
     
     @IBAction func spreTapped () {
-        openWeb(type: .bookingRemove, id: MYJob.current.jobId)
+        openWeb(type: .bookingRemove, id: Current.job.jobId)
     }
     @IBAction func dateTapped () {
-        openWeb(type: .bookingMove, id: MYJob.current.jobId)
+        openWeb(type: .bookingMove, id: Current.job.jobId)
     }
     
     @IBAction func contTapped () {
-        if MYResult.current.execution_date.isEmpty {
-            guard MYJob.current.learning_done else {
-                openWeb(type: .none, urlPage:  MYJob.current.learning_url)
-                MYJob.current.learning_done = true
+        if Current.result.execution_date.isEmpty {
+            guard Current.job.learning_done else {
+                openWeb(type: .none, urlPage:  Current.job.learning_url)
+                Current.job.learning_done = true
                 loadAndShowResult()
                 return
             }
             LcRealm.begin()
-            MYResult.current.estimate_date = Date().toString(withFormat: Config.DateFmt.DataJson)
+            Current.result.estimate_date = Date().toString(withFormat: Config.DateFmt.DataJson)
             LcRealm.commit()
-//            TblResultUtil.saveCurrentResult()
         }
         let wheel = MYWheel()
         wheel.start(view)
@@ -112,32 +111,36 @@ class JobDetail: MYViewController {
     }
     
     @IBAction func tickTapped () {
-        openWeb(type: .ticketView, id: MYJob.current.jobId)
+        openWeb(type: .ticketView, id: Current.job.jobId)
     }
     
     @IBAction func strtTapped () {
         MYGps.shared.start()
         LcRealm.begin()
-        MYResult.current.pos_start = true
+        Current.result.pos_start = true
+        LcRealm.commit()
         executionTime()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            MYResult.current.pos_start_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
-            MYResult.current.pos_start_lat = MYGps.shared.currentGps.latitude
-            MYResult.current.pos_start_lng = MYGps.shared.currentGps.longitude
+            LcRealm.begin()
+            Current.result.pos_start_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
+            Current.result.pos_start_lat = MYGps.shared.currentGps.latitude
+            Current.result.pos_start_lng = MYGps.shared.currentGps.longitude
             LcRealm.commit()
         }
     }
     @IBAction func stopTapped () {
         MYGps.shared.start()
         LcRealm.begin()
-        MYResult.current.pos_end = true
+        Current.result.pos_end = true
+        LcRealm.commit()
         executionTime()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            MYResult.current.pos_end_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
-            MYResult.current.pos_end_lat = MYGps.shared.currentGps.latitude
-            MYResult.current.pos_end_lng = MYGps.shared.currentGps.longitude
-            if MYResult.current.execution_end_time.isEmpty {
-                MYResult.current.execution_end_time = Date().toString(withFormat: Config.DateFmt.Ora)
+            LcRealm.begin()
+            Current.result.pos_end_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
+            Current.result.pos_end_lat = MYGps.shared.currentGps.latitude
+            Current.result.pos_end_lng = MYGps.shared.currentGps.longitude
+            if Current.result.execution_end_time.isEmpty {
+                Current.result.execution_end_time = Date().toString(withFormat: Config.DateFmt.Ora)
             }
             LcRealm.commit()
         }
@@ -146,7 +149,7 @@ class JobDetail: MYViewController {
     // MARK: - private
     
     private func initialize () {
-        let path = "\(Config.Path.docs)/\(MYJob.current.jobId)"
+        let path = "\(Config.Path.docs)/\(Current.job.jobId)"
         let fm = FileManager.default
         if fm.fileExists(atPath: path) == false {
             do {
@@ -160,23 +163,23 @@ class JobDetail: MYViewController {
     }
     
     private func showData () {
-        header?.header.titleLabel.text = MYJob.current.store_name
+        header?.header.titleLabel.text = Current.job.store_name
         infoLabel.text =
-            Lng("rifNum") + ": \(MYJob.current.reference)\n" +
-            Lng("verIni") + ": \(MYJob.current.start_date.toString(withFormat: Config.DateFmt.Data))\n" +
-            Lng("verEnd") + ": \(MYJob.current.end_date.toString(withFormat: Config.DateFmt.Data))\n"
-        nameLabel.text = MYJob.current.store_name
-        addrLabel.text = MYJob.current.store_address
+            Lng("rifNum") + ": \(Current.job.reference)\n" +
+            Lng("verIni") + ": \(Current.job.start_date.toString(withFormat: Config.DateFmt.Data))\n" +
+            Lng("verEnd") + ": \(Current.job.end_date.toString(withFormat: Config.DateFmt.Data))\n"
+        nameLabel.text = Current.job.store_name
+        addrLabel.text = Current.job.store_address
     }
     
     private func loadAndShowResult () {
         executionTime()
         var title = ""
-        if  MYResult.current.execution_date.isEmpty == false {
+        if  Current.result.execution_date.isEmpty == false {
             title = "kpiCont"
-        } else if MYJob.current.irregular == true {
+        } else if Current.job.irregular == true {
             title = "kpiIrre"
-        } else if MYJob.current.learning_done == false {
+        } else if Current.job.learning_done == false {
             title = "learning"
         } else {
             title = "kpiInit"
@@ -192,11 +195,11 @@ class JobDetail: MYViewController {
         stopBtn.backgroundColor = .lightGray
         stopBtn.setTitleColor(UIColor.black, for: .normal);
 
-        if MYResult.current.pos_start == false {
+        if Current.result.pos_start == false {
             strtBtn.isEnabled = true
             strtBtn.backgroundColor = UIColor.red
             strtBtn.setTitleColor(UIColor.white, for: .normal);
-        } else if MYResult.current.pos_end == false {
+        } else if Current.result.pos_end == false {
             stopBtn.isEnabled = true
 //            stopBtn.backgroundColor = UIColor.white
         }
