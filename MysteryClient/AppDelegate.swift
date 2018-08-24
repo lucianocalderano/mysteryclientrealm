@@ -67,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func createWorkingPath () {
         let fm = FileManager.default  
-        for path in [Config.Path.zip, Config.Path.result] {
+        for path in [Config.Path.zip] {
             if fm.fileExists(atPath: path) {
                 continue
             }

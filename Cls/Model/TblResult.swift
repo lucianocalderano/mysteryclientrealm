@@ -25,11 +25,21 @@ class TblResult: Object {
     @objc dynamic var execution_end_time = ""         // [hh:mm]
     @objc dynamic var store_closed = false            // Boolean [0/1]
     @objc dynamic var comment = ""
+
+    @objc dynamic var pos_start = false
+    @objc dynamic var pos_start_date = ""     // [aaaa-mm-dd hh:mm:ss]
+    @objc dynamic var pos_start_lat:Double = 0
+    @objc dynamic var pos_start_lng:Double = 0
+    @objc dynamic var pos_end = false
+    @objc dynamic var pos_end_date = ""       // [aaaa-mm-dd hh:mm:ss]
+    @objc dynamic var pos_end_lat:Double = 0
+    @objc dynamic var pos_end_lng:Double = 0
+
     let results = List<TblResultKpi>()
-    let positioning = List<TblResultPos>()
 }
 
 class TblResultKpi: Object {
+    @objc dynamic var jobId = 0
     override class func primaryKey() -> String? {
         return "kpi_id"
     }
@@ -38,19 +48,3 @@ class TblResultKpi: Object {
     @objc dynamic var notes = ""
     @objc dynamic var attachment = ""
 }
-
-class TblResultPos: Object  {
-    @objc dynamic var key = 0
-    override class func primaryKey() -> String? {
-        return "key"
-    }
-    @objc dynamic var start = false
-    @objc dynamic var start_date = ""     // [aaaa-mm-dd hh:mm:ss]
-    @objc dynamic var start_lat:Double = 0
-    @objc dynamic var start_lng:Double = 0
-    @objc dynamic var end = false
-    @objc dynamic var end_date = ""       // [aaaa-mm-dd hh:mm:ss]
-    @objc dynamic var end_lat:Double = 0
-    @objc dynamic var end_lng:Double = 0
-}
-

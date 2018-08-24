@@ -24,12 +24,12 @@ class JobsHome: MYViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        MYResult.current = JobResult()
+        MYResult.current = TblResult()
         loadJobs()
     }
     
     override func headerViewDxTapped() {
-        DB.jobClear()
+        DB.clearAll()
         loadJobs()
     }
     
@@ -43,7 +43,7 @@ class JobsHome: MYViewController {
             for item in items {
                 if item.jobId > 0 {
                     if zipExists(id: item.jobId) {
-                        DB.jobClear(item.jobId)
+                        MYJob.removeJobWithId(item.jobId)
                     }
                 }
             }
@@ -75,7 +75,7 @@ extension JobsHome {
             let request = MYHttp.init(.get, param: param)
             request.load( { (response) in
                 for dict in response.array("jobs") as! [JsonDict] {
-                    DB.addJob(withDict: dict)
+                    LcRealm.shared.addJob(withDict: dict)
                 }
                 done (DB.jobs())
             }) {

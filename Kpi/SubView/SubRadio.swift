@@ -17,7 +17,7 @@ class SubRadio: KpiBaseSubView {
     let rowHeight:CGFloat = 50
     var valuationSelected: TblJobKpiValuation?
     
-    override var currentResult: JobResult.KpiResult? {
+    override var currentResult: TblResultKpi? {
         didSet {
             if let value = currentResult?.value {
                 let index = Int(value)

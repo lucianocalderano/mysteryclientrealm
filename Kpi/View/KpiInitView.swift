@@ -44,9 +44,10 @@ class KpiInitView: KpiBaseView {
             completion (.errNotes)
         }
         
+        LcRealm.begin()
         MYResult.current.execution_date = datePicker.date.toString(withFormat: Config.DateFmt.DataJson)
         MYResult.current.execution_start_time = datePicker.date.toString(withFormat: Config.DateFmt.Ora)
-        MYResult.shared.saveResult()
+        LcRealm.commit()
         completion (.next)
     }
     
@@ -65,12 +66,7 @@ class KpiInitView: KpiBaseView {
     }
     
     private func firstLoad () {
-        if MYResult.current.results.count < MYJob.current.kpis.count {
-            for _ in MYResult.current.results.count...MYJob.current.kpis.count - 1 {
-                MYResult.current.results.append(JobResult.KpiResult())
-            }
-            MYResult.shared.saveResult()
-        }
+        TblResultUtil.firstLoad()
     }
 }
 

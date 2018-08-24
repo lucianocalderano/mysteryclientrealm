@@ -56,7 +56,7 @@ class SendJob {
             try fm.removeItem(atPath: MYJob.JobPath)
             let id = MYJob.current.jobId
             MYJob.removeJobWithId(id)
-            MYResult.shared.removeResultWithId(id)
+            TblResultUtil.removeResult(withId: id)
             return ""
         } catch {
         }

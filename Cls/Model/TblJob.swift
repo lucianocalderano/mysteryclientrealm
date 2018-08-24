@@ -95,9 +95,18 @@ class TblJobKpi: Object {
     @objc dynamic var service = ""
     @objc dynamic var standard = ""
     @objc dynamic var instructions = ""
+    
+    @objc dynamic var result_id = 0
+    @objc dynamic var result_value = ""
+    @objc dynamic var result_notes = ""
+    @objc dynamic var result_attachment = ""
+    @objc dynamic var result_url = ""
+    @objc dynamic var result_irregular = false
+    @objc dynamic var result_irregular_note = ""
+
     let valuations = List<TblJobKpiValuation>()
-    let result = List<TblJobKpiResult>()
 }
+
 class TblJobKpiValuation: Object {
     @objc dynamic var jobId = 0
     @objc dynamic var key = ""
@@ -122,18 +131,4 @@ class TblJobKpiValDependency: Object {
     @objc dynamic var key = 0
     @objc dynamic var value = ""
     @objc dynamic var notes = ""
-}
-class TblJobKpiResult: Object {
-    @objc dynamic var jobId = 0
-    override class func primaryKey() -> String? {
-        return "id"
-    }
-    
-    @objc dynamic var id = 0
-    @objc dynamic var value = ""
-    @objc dynamic var notes = ""
-    @objc dynamic var attachment = ""
-    @objc dynamic var url = ""
-    @objc dynamic var irregular = false
-    @objc dynamic var irregular_note = ""
 }

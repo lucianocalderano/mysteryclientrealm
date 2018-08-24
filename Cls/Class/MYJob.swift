@@ -20,13 +20,32 @@ class MYJob {
     public static var KpiKeyList = [Int]() // Di comodo per evitare la ricerca del kpi.id nell'array dei kpi
     
     class func removeJobWithId (_ id: Int) {
-        DB.jobClear(id)
+        let realm = LcRealm.shared.realm!
+        let filter = "jobId = \(id)"
+        
+        let tblJob = realm.objects(TblJob.self).filter(filter)
+        let tblJobAtt = realm.objects(TblJobAttachment.self).filter(filter)
+        let tblJobKpi = realm.objects(TblJobKpi.self).filter(filter)
+        let tblJobKpiVal = realm.objects(TblJobKpiValuation.self).filter(filter)
+        let tblJobKpiValDep = realm.objects(TblJobKpiValDependency.self).filter(filter)
+        
+        do {
+            try realm.write {
+                realm.delete(tblJob)
+                realm.delete(tblJobAtt)
+                realm.delete(tblJobKpi)
+                realm.delete(tblJobKpiVal)
+                realm.delete(tblJobKpiValDep)
+            }
+        } catch {
+            print("Could not write to database: ", error)
+        }
     }
     
     class func updateCurrentJob (_ job: TblJob, delegate: MYJobDelegate?) {
         MYJob.current = job
         MYJob.JobPath = Config.Path.docs + "\(MYJob.current.jobId)" + "/"
-        MYResult.current = MYResult.shared.loadResult (jobId: MYJob.current.jobId)
+//        MYResult.current = MYResult.shared.loadResult (jobId: MYJob.current.jobId)
 
         let me = MYJob()
         me.updateCurrentJob(delegate: delegate)
@@ -81,7 +100,7 @@ class MYJob {
             let dict = response.dictionary("job")
             DB.addJob(withDict: dict)
             MYJob.current = DB.jobs(withId: MYJob.current.jobId).first
-            
+
             if MYJob.current.irregular == true {
                 self.downloadResult()
             } else {
@@ -95,8 +114,10 @@ class MYJob {
     }
     
     private func openJobDetail () {
+        TblResultUtil.loadResult(withId: MYJob.current.jobId)
+        
         MYJob.KpiKeyList.removeAll()
-        DB.kpisReset()
+        DB.setKpiToValid()
         for kpi in MYJob.current.kpis {
             MYJob.KpiKeyList.append(kpi.id)
         }
@@ -107,19 +128,23 @@ class MYJob {
     //MARK:- Irregular = true
     
     private func downloadResult () {
-        MYResult.current.results.removeAll()
-        for kpi in MYJob.current.kpis {
-            let kpiResult = kpi.result.first!
-            let result = JobResult.KpiResult()
-            result.kpi_id = kpiResult.id
-            result.value = kpiResult.value
-            result.notes = kpiResult.notes
-            result.attachment = kpiResult.attachment
-            MYResult.current.results.append(result)
-            if kpiResult.url.isEmpty == false {
-                downloadAtch(url: kpiResult.url, kpiId: kpi.id)
-            }
-        }
+        TblResultUtil.create()
+//        LcRealm.begin()
+//        MYResult.current.results.removeAll()
+//        LcRealm.commit()
+//        for jobKpi in MYJob.current.kpis {
+//            let result = TblResultKpi()
+//            result.kpi_id = jobKpi.result_id
+//            result.value = jobKpi.result_value
+//            result.notes = jobKpi.result_notes
+//            result.attachment = jobKpi.result_attachment
+//            LcRealm.begin()
+//            MYResult.current.results.append(result)
+//            LcRealm.commit()
+//            if jobKpi.result_url.isEmpty == false {
+//                downloadAtch(url: jobKpi.result_url, kpiId: jobKpi.id)
+//            }
+//        }
         openJobDetail()
     }
     

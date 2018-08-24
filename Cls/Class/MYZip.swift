@@ -34,33 +34,4 @@ class MYZip {
         }
         return false
     }
-    
-    class func createZipFileWithDict (_ dict: JsonDict) -> Bool {
-        let fm = FileManager.default
-        
-        do {
-            let json = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-            
-            try? json.write(to: URL.init(fileURLWithPath: MYJob.JobPath + Config.File.json))
-            
-            let filesToZip = try fm.contentsOfDirectory(at: URL.init(string: MYJob.JobPath)!,
-                                                   includingPropertiesForKeys: nil,
-                                                   options: [])
-            
-            let zipFile = URL.init(fileURLWithPath: MYZip.getZipFilePath(id: MYJob.current.jobId))
-            try Zip.zipFiles(paths: filesToZip,
-                             zipFilePath: zipFile,
-                             password: nil,
-                             progress: nil)
-            
-            try? fm.removeItem(atPath: MYJob.JobPath)
-            MYJob.removeJobWithId(MYJob.current.jobId)
-            MYResult.shared.removeResultWithId(MYJob.current.jobId)
-            
-            return true
-        } catch {
-            print("createZipFileWithDict: error")
-        }
-        return false
-    }
 }

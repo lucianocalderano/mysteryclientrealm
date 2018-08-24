@@ -19,7 +19,7 @@ class SubCheckBox: KpiBaseSubView {
     var selectedId = [String]()
     
     // MARK:-
-    override var currentResult: JobResult.KpiResult? {
+    override var currentResult: TblResultKpi? {
         didSet {
             if let value = currentResult?.value {
                 let itemsId = value.components(separatedBy: separator)

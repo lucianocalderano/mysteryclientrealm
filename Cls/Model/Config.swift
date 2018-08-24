@@ -36,7 +36,7 @@ struct Config {
     struct Path {
         static let docs = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] + "/"
         static let jobs = Config.Path.docs + "jobs/"
-        static let result = Config.Path.docs + "result/"
+//        static let result = Config.Path.docs + "result/"
         static let zip = Config.Path.docs + "zip/"
     }
 

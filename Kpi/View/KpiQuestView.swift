@@ -45,18 +45,18 @@ class KpiQuestView: KpiBaseView {
     }
     
     override func initialize() {
-        kpiTitle.text = currentKpi.factor
-        kpiQuestion.text = currentKpi.standard
-        kpiInstructions.text = currentKpi.instructions
-        kpiAtchBtn.isHidden = !currentKpi.attachment && !currentKpi.attachment_required
+        kpiTitle.text = currentJobKpi.factor
+        kpiQuestion.text = currentJobKpi.standard
+        kpiInstructions.text = currentJobKpi.instructions
+        kpiAtchBtn.isHidden = !currentJobKpi.attachment && !currentJobKpi.attachment_required
 
-        updateNoteTitle(note_required: currentKpi.note_required)
-        updateAtchTitle(atch_required: currentKpi.attachment_required)
+        updateNoteTitle(note_required: currentJobKpi.note_required)
+        updateAtchTitle(atch_required: currentJobKpi.attachment_required)
 
         kpiNote.text = currentResult.notes
         showAtch()
         
-        addQuestSubview(type: currentKpi.type)
+        addQuestSubview(type: currentJobKpi.type)
     }
     
     override func getHeight() -> CGFloat {
@@ -66,29 +66,30 @@ class KpiQuestView: KpiBaseView {
 
     override func checkData(completion: @escaping (KpiResultType) -> ()) {
         let responseValue = kpiQuestSubView.getValuation()
-        var noteRequired = currentKpi.note_required
-        var atchRequired = currentKpi.attachment_required
+        var noteRequired = currentJobKpi.note_required
+        var atchRequired = currentJobKpi.attachment_required
         var saveResult: KpiResultType {
             if currentResult.value != responseValue.value {
-                InvalidKpi.resetDependenciesWithKpi(currentKpi)
+                InvalidKpi.resetDependenciesWithKpi(currentJobKpi)
             }
             
 //            if currentResult.kpi_id == 0 {
 //                currentResult.kpi_id = currentKpi.id
 //            }
+            LcRealm.begin()
             currentResult.value = responseValue.value
             currentResult.notes = kpiNote.text
             currentResult.attachment = atchName.text!
-            
+            LcRealm.commit()
+
             if responseValue.dependencies.count > 0 {
                 InvalidKpi.updateWithResponse(responseValue)
             }
-            
-            MYResult.shared.saveResult()
+//            TblResultUtil.saveCurrentResult()
             return .next
         }
 
-        if currentKpi.required == true {
+        if currentJobKpi.required == true {
             if responseValue.value.isEmpty && valueMandatoty == true {
                 completion (.errValue)
             }
@@ -132,11 +133,17 @@ class KpiQuestView: KpiBaseView {
         
         if atchImage.image == nil {
             atchView.isHidden = true
-            currentResult.attachment = ""
+            setAtchName()
         } else {
             atchView.isHidden = false
         }
         atchName.text = currentResult.attachment
+    }
+    
+    private func setAtchName (file: String = "") {
+        LcRealm.begin()
+        currentResult.attachment = file
+        LcRealm.commit()
     }
     
     @objc func atchRemove () {
@@ -159,11 +166,11 @@ class KpiQuestView: KpiBaseView {
                 imv.removeFromSuperview()
                 do {
                     try FileManager.default.removeItem(atPath: fileName)
-                    self.currentResult.attachment = ""
+                    self.setAtchName()
                 }
                 catch let error as NSError {
                     print("removeItem atPath: \(error)")
-                    self.currentResult.attachment = ""
+                    self.setAtchName()
                 }
                 self.showAtch()
             }
@@ -231,7 +238,7 @@ class KpiQuestView: KpiBaseView {
         }
         containerSubView.addSubviewWithConstraints(kpiQuestSubView)
         kpiQuestSubView.delegate = self
-        kpiQuestSubView.currentKpi = currentKpi
+        kpiQuestSubView.currentKpi = currentJobKpi
         kpiQuestSubView.currentResult = currentResult
     }
     
@@ -254,9 +261,9 @@ extension KpiQuestView: KpiSubViewDelegate {
     }
     
     func valuationSelected(_ valuation: TblJobKpiValuation) {
-        print(valuation.note_required , currentKpi.note_required , ":" , valuation.attachment_required , currentKpi.attachment_required)
-        updateNoteTitle(note_required: valuation.note_required || currentKpi.note_required)
-        updateAtchTitle(atch_required: valuation.attachment_required || currentKpi.attachment_required)
+        print(valuation.note_required , currentJobKpi.note_required , ":" , valuation.attachment_required , currentJobKpi.attachment_required)
+        updateNoteTitle(note_required: valuation.note_required || currentJobKpi.note_required)
+        updateAtchTitle(atch_required: valuation.attachment_required || currentJobKpi.attachment_required)
     }
 }
 
@@ -281,14 +288,14 @@ extension KpiQuestView: UITextViewDelegate {
 
 extension KpiQuestView: KpiAtchDelegate {
     func kpiAtchSelectedImage(withData data: Data) {
-        currentResult.attachment = "\(MYJob.current.reference).\(currentKpi.id).jpg"
+        setAtchName(file: "\(MYJob.current.reference).\(currentJobKpi.id).jpg")
         let fileName = MYJob.JobPath + currentResult.attachment
         
         do {
             try data.write(to: URL.init(string: Config.File.urlPrefix + fileName)!)
         } catch {
             print("errore salvataggio file " + currentResult.attachment)
-            currentResult.attachment = "";
+            setAtchName()
         }
         showAtch()
     }

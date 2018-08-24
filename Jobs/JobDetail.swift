@@ -98,8 +98,10 @@ class JobDetail: MYViewController {
                 loadAndShowResult()
                 return
             }
+            LcRealm.begin()
             MYResult.current.estimate_date = Date().toString(withFormat: Config.DateFmt.DataJson)
-            MYResult.shared.saveResult()
+            LcRealm.commit()
+//            TblResultUtil.saveCurrentResult()
         }
         let wheel = MYWheel()
         wheel.start(view)
@@ -115,27 +117,29 @@ class JobDetail: MYViewController {
     
     @IBAction func strtTapped () {
         MYGps.shared.start()
-        MYResult.current.positioning.start = true
+        LcRealm.begin()
+        MYResult.current.pos_start = true
         executionTime()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            MYResult.current.positioning.start_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
-            MYResult.current.positioning.start_lat = MYGps.shared.currentGps.latitude
-            MYResult.current.positioning.start_lng = MYGps.shared.currentGps.longitude
-            MYResult.shared.saveResult()
+            MYResult.current.pos_start_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
+            MYResult.current.pos_start_lat = MYGps.shared.currentGps.latitude
+            MYResult.current.pos_start_lng = MYGps.shared.currentGps.longitude
+            LcRealm.commit()
         }
     }
     @IBAction func stopTapped () {
         MYGps.shared.start()
-        MYResult.current.positioning.end = true
+        LcRealm.begin()
+        MYResult.current.pos_end = true
         executionTime()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            MYResult.current.positioning.end_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
-            MYResult.current.positioning.end_lat = MYGps.shared.currentGps.latitude
-            MYResult.current.positioning.end_lng = MYGps.shared.currentGps.longitude
+            MYResult.current.pos_end_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
+            MYResult.current.pos_end_lat = MYGps.shared.currentGps.latitude
+            MYResult.current.pos_end_lng = MYGps.shared.currentGps.longitude
             if MYResult.current.execution_end_time.isEmpty {
                 MYResult.current.execution_end_time = Date().toString(withFormat: Config.DateFmt.Ora)
             }
-            MYResult.shared.saveResult()
+            LcRealm.commit()
         }
     }
     
@@ -188,11 +192,11 @@ class JobDetail: MYViewController {
         stopBtn.backgroundColor = .lightGray
         stopBtn.setTitleColor(UIColor.black, for: .normal);
 
-        if MYResult.current.positioning.start == false {
+        if MYResult.current.pos_start == false {
             strtBtn.isEnabled = true
             strtBtn.backgroundColor = UIColor.red
             strtBtn.setTitleColor(UIColor.white, for: .normal);
-        } else if MYResult.current.positioning.end == false {
+        } else if MYResult.current.pos_end == false {
             stopBtn.isEnabled = true
 //            stopBtn.backgroundColor = UIColor.white
         }

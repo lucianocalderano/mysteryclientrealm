@@ -43,7 +43,7 @@ class KpiMain: MYViewController {
             kpiView.kpiIndex = currentIndex
             scroll.backgroundColor = UIColor.white
             let kpi = MYJob.current.kpis[currentIndex]
-            warnBtn.isHidden = (kpi.result.first!.irregular == false)
+            warnBtn.isHidden = (kpi.result_irregular == false)
         }
         kpiView.mainVC = self
         kpiView.delegate = self
@@ -90,7 +90,7 @@ class KpiMain: MYViewController {
     
     @IBAction func warnTapped () {
         let kpi = MYJob.current.kpis[currentIndex]
-        self.alert("Irregolare", message: kpi.result.first!.irregular_note)
+        self.alert("Irregolare", message: kpi.result_irregular_note)
     }
     
     //MARK: - Private
@@ -163,7 +163,8 @@ extension KpiMain: KpiDelegate {
 extension KpiMain {
     private func sendKpiResult () {
         let sendJob = SendJob()
-        let result = sendJob.createZipFileWithDict(MYResult.shared.resultDict)
+        let dict = MYResult.createJson()
+        let result = sendJob.createZipFileWithDict(dict)
         
         guard result.isEmpty else {
             alert ("Errore zip", message: result, okBlock: nil)

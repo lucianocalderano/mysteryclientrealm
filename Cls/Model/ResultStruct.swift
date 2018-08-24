@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct JobResult {    
+struct JobResultXX {    
 //    static let shared = JobResult()
     var id = 0
     var estimate_date = "" // Date [aaaa-mm-dd]

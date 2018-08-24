@@ -59,11 +59,12 @@ class KpiLastView: KpiBaseView {
             completion(.errComment)
             return
         }
+        LcRealm.begin()
         MYResult.current.comment = finalText.text!
-        MYResult.current.compiled = 1
+        MYResult.current.compiled = true
         MYResult.current.compilation_date = Date().toString(withFormat: Config.DateFmt.DataOraJson)
         MYResult.current.execution_end_time = datePicker.date.toString(withFormat: Config.DateFmt.Ora)
-        MYResult.shared.saveResult()        
+        LcRealm.commit()
         completion (.last)
     }
 }

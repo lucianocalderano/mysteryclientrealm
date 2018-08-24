@@ -22,36 +22,27 @@ class LcRealm {
         }
     }
     
+    class func begin() {
+        LcRealm.shared.realm.beginWrite()
+    }
+    class func commit() {
+        try! LcRealm.shared.realm.commitWrite()
+    }
+
+    
     func jobs(withId id: Int = 0) -> Results<TblJob>! {
         let filter = (id > 0) ? "jobId = \(id)" : "jobId > 0"
         return realm.objects(TblJob.self).filter(filter)
     }
 
-    func jobClear(_ id: Int = 0) {
-        let filter = (id > 0) ? "jobId = \(id)" : "jobId > 0"
-        
-        let tblJob = realm.objects(TblJob.self).filter(filter)
-        let tblJobAtt = realm.objects(TblJobAttachment.self).filter(filter)
-        let tblJobKpi = realm.objects(TblJobKpi.self).filter(filter)
-        let tblJobKpiRes = realm.objects(TblJobKpiResult.self).filter(filter)
-        let tblJobKpiVal = realm.objects(TblJobKpiValuation.self).filter(filter)
-        let tblJobKpiValDep = realm.objects(TblJobKpiValDependency.self).filter(filter)
-        
-        do {
-            try realm.write {
-                realm.delete(tblJob)
-                realm.delete(tblJobAtt)
-                realm.delete(tblJobKpi)
-                realm.delete(tblJobKpiRes)
-                realm.delete(tblJobKpiVal)
-                realm.delete(tblJobKpiValDep)
-            }
-        } catch {
-            print("Could not write to database: ", error)
+    func clearAll() {
+        try! realm.write {
+            realm.deleteAll()
         }
+        return
     }
-    
-    func kpisReset() {
+
+    func setKpiToValid() {
         let kpis = realm.objects(TblJobKpi.self).filter("isValid = %@", false)
         if kpis.count == 0 {
             return
@@ -147,9 +138,17 @@ class LcRealm {
             jobKpi.standard = dict.string("standard")
             jobKpi.instructions = dict.string("instructions")
             
+            let result = dict.dictionary("result")
+            jobKpi.result_id = result.int("id")
+            jobKpi.result_value = result.string("value")
+            jobKpi.result_notes = result.string("notes")
+            jobKpi.result_attachment = result.string("attachment")
+            jobKpi.result_url = result.string("url")
+            jobKpi.result_irregular = result.bool("irregular")
+            jobKpi.result_irregular_note = result.string("irregular_note")
+
             for valutation in dict.array("valuations") as! [JsonDict] {
                 let val = TblJobKpiValuation()
-                val.jobId = tblJpb.jobId
                 val.id = valutation.int("id")
                 val.name = valutation.string("name")
                 val.order = valutation.int("order")
@@ -165,22 +164,10 @@ class LcRealm {
                     dep.notes = dependency.string("notes")
                     val.dependencies.append(dep)
                 }
-                val.key = "\(tblJpb.jobId).\(jobKpi.id).\(val.id)"
+                val.jobId = tblJpb.jobId
+                val.key = "\(jobKpi.result_id ).\(val.id)"
                 jobKpi.valuations.append(val)
             }
-            
-            let result = dict.dictionary("result")
-            let jobResult = TblJobKpiResult();
-            jobResult.jobId = tblJpb.jobId
-            jobResult.id = result.int("id")
-            jobResult.value = result.string("value")
-            jobResult.notes = result.string("notes")
-            jobResult.attachment = result.string("attachment")
-            jobResult.url = result.string("url")
-            jobResult.irregular = result.bool("irregular")
-            jobResult.irregular_note = result.string("irregular_note")
-            
-            jobKpi.result.append((jobResult))
             return jobKpi
         }
         

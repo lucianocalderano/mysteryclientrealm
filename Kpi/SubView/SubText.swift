@@ -15,7 +15,7 @@ class SubText: KpiBaseSubView {
 
     @IBOutlet private var kpiText: MYTextField!
 
-    override var currentResult: JobResult.KpiResult? {
+    override var currentResult: TblResultKpi? {
         didSet {
             kpiText.text = currentResult?.value
             delegate?.kpiViewHeight(self.frame.size.height)
